@@ -74,9 +74,9 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
         LogAction.create(getUserId(), entity);
 
         if (getUserId() != ServiceAccountUser.ID) {
-            storage.addPermission(new Permission(User.class, getUserId(), baseClass, entity.getId()));
-            cacheManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true);
-            connectionManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true);
+            storage.addPermission(new Permission(User.class, getUserId(), baseClass, entity.getId())); // &line[addPermission]
+            cacheManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true); // &line[invalidatePermission]
+            connectionManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true); // &line[invalidatePermission]
             LogAction.link(getUserId(), User.class, getUserId(), baseClass, entity.getId());
         }
 
@@ -86,13 +86,13 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
     @Path("{id}")
     @PUT
     public Response update(T entity) throws Exception {
-        permissionsService.checkPermission(baseClass, getUserId(), entity.getId());
+        permissionsService.checkPermission(baseClass, getUserId(), entity.getId()); // &line[checkPermission]
 
         boolean skipReadonly = false;
         if (entity instanceof User after) {
             User before = storage.getObject(User.class, new Request(
                     new Columns.All(), new Condition.Equals("id", entity.getId())));
-            permissionsService.checkUserUpdate(getUserId(), before, (User) entity);
+            permissionsService.checkUserUpdate(getUserId(), before, (User) entity); // &line[checkUserUpdate]
             skipReadonly = permissionsService.getUser(getUserId())
                     .compare(after, "notificationTokens", "termsAccepted");
         } else if (entity instanceof Group group) {
@@ -101,19 +101,19 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
             }
         }
 
-        permissionsService.checkEdit(getUserId(), entity, false, skipReadonly);
+        permissionsService.checkEdit(getUserId(), entity, false, skipReadonly); // &line[checkEdit]
 
         storage.updateObject(entity, new Request(
                 new Columns.Exclude("id"),
                 new Condition.Equals("id", entity.getId())));
         if (entity instanceof User user) {
-            if (user.getHashedPassword() != null) {
+            if (user.getHashedPassword() != null) { // &line[getHashedPassword]
                 storage.updateObject(entity, new Request(
                         new Columns.Include("hashedPassword", "salt"),
                         new Condition.Equals("id", entity.getId())));
             }
         }
-        cacheManager.invalidateObject(true, entity.getClass(), entity.getId(), ObjectOperation.UPDATE);
+        cacheManager.invalidateObject(true, entity.getClass(), entity.getId(), ObjectOperation.UPDATE);  // &line[invalidateObject]
         LogAction.edit(getUserId(), entity);
 
         return Response.ok(entity).build();
@@ -122,11 +122,11 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
     @Path("{id}")
     @DELETE
     public Response remove(@PathParam("id") long id) throws Exception {
-        permissionsService.checkPermission(baseClass, getUserId(), id);
-        permissionsService.checkEdit(getUserId(), baseClass, false, false);
+        permissionsService.checkPermission(baseClass, getUserId(), id);  // &line[checkPermission]
+        permissionsService.checkEdit(getUserId(), baseClass, false, false); // &line[checkEdit]
 
         storage.removeObject(baseClass, new Request(new Condition.Equals("id", id)));
-        cacheManager.invalidateObject(true, baseClass, id, ObjectOperation.DELETE);
+        cacheManager.invalidateObject(true, baseClass, id, ObjectOperation.DELETE); // &line[invalidateObject]
 
         LogAction.remove(getUserId(), baseClass, id);
 

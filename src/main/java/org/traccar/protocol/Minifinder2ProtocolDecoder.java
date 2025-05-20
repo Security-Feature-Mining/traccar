@@ -92,7 +92,7 @@ public class Minifinder2ProtocolDecoder extends BaseProtocolDecoder {
             response.writeByte(0xAB); // header
             response.writeByte(0x00); // properties
             response.writeShortLE(content.readableBytes());
-            response.writeShortLE(Checksum.crc16(Checksum.CRC16_XMODEM, content.nioBuffer()));
+            response.writeShortLE(Checksum.crc16(Checksum.CRC16_XMODEM, content.nioBuffer())); // &line[Checksum_crc16]
             response.writeShortLE(index);
             response.writeBytes(content);
             content.release();

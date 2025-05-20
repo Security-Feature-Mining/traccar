@@ -215,7 +215,7 @@ public class CastelProtocolDecoder extends BaseProtocolDecoder {
                 content.release();
             }
             response.writeShortLE(
-                    Checksum.crc16(Checksum.CRC16_X25, response.nioBuffer(0, response.writerIndex())));
+                    Checksum.crc16(Checksum.CRC16_X25, response.nioBuffer(0, response.writerIndex()))); // &line[Checksum_crc16]
             response.writeByte(0x0D); response.writeByte(0x0A);
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }
@@ -237,7 +237,7 @@ public class CastelProtocolDecoder extends BaseProtocolDecoder {
                 response.writeByte(0xff);
             }
             response.writeShortLE(
-                    Checksum.crc16(Checksum.CRC16_X25, response.nioBuffer(0, response.writerIndex())));
+                    Checksum.crc16(Checksum.CRC16_X25, response.nioBuffer(0, response.writerIndex()))); // &line[Checksum_crc16]
             response.writeByte(0x0D); response.writeByte(0x0A);
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }

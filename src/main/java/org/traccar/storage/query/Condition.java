@@ -148,6 +148,7 @@ public interface Condition {
         private final long propertyId;
         private final boolean excludeGroups;
 
+        // &end[Permission_Class]
         private Permission(
                 Class<?> ownerClass, long ownerId, Class<?> propertyClass, long propertyId, boolean excludeGroups) {
             this.ownerClass = ownerClass;
@@ -164,10 +165,13 @@ public interface Condition {
         public Permission(Class<?> ownerClass, Class<?> propertyClass, long propertyId) {
             this(ownerClass, 0, propertyClass, propertyId, false);
         }
+        // &end[Permission_Class]
 
+// &begin[excludeGroups]
         public Permission excludeGroups() {
             return new Permission(this.ownerClass, this.ownerId, this.propertyClass, this.propertyId, true);
         }
+        // &end[excludeGroups]
 
         public Class<?> getOwnerClass() {
             return ownerClass;

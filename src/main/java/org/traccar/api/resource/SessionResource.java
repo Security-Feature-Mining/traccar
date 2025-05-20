@@ -76,15 +76,15 @@ public class SessionResource extends BaseResource {
     public User get(@QueryParam("token") String token) throws StorageException, IOException, GeneralSecurityException {
 
         if (token != null) {
-            LoginResult loginResult = loginService.login(token);
+            LoginResult loginResult = loginService.login(token); // &line[login]
             if (loginResult != null) {
                 User user = loginResult.getUser();
-                SessionHelper.userLogin(request, user, loginResult.getExpiration());
+                SessionHelper.userLogin(request, user, loginResult.getExpiration()); // &line[userLogin]
                 return user;
             }
         }
 
-        Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY);
+        Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY); // &line[getSession]
         if (userId != null) {
             User user = permissionsService.getUser(userId);
             if (user != null) {
@@ -98,10 +98,10 @@ public class SessionResource extends BaseResource {
     @Path("{id}")
     @GET
     public User get(@PathParam("id") long userId) throws StorageException {
-        permissionsService.checkUser(getUserId(), userId);
+        permissionsService.checkUser(getUserId(), userId);  // &line[checkUser]
         User user = storage.getObject(User.class, new Request(
                 new Columns.All(), new Condition.Equals("id", userId)));
-        SessionHelper.userLogin(request, user, null);
+        SessionHelper.userLogin(request, user, null); // &line[userLogin]
         return user;
     }
 
@@ -113,7 +113,7 @@ public class SessionResource extends BaseResource {
             @FormParam("code") Integer code) throws StorageException {
         LoginResult loginResult;
         try {
-            loginResult = loginService.login(email, password, code);
+            loginResult = loginService.login(email, password, code); // &line[login]
         } catch (CodeRequiredException e) {
             Response response = Response
                     .status(Response.Status.UNAUTHORIZED)
@@ -123,10 +123,10 @@ public class SessionResource extends BaseResource {
         }
         if (loginResult != null) {
             User user = loginResult.getUser();
-            SessionHelper.userLogin(request, user, null);
+            SessionHelper.userLogin(request, user, null); // &line[userLogin]
             return user;
         } else {
-            LogAction.failedLogin(WebHelper.retrieveRemoteAddress(request));
+            LogAction.failedLogin(WebHelper.retrieveRemoteAddress(request)); // &line[failedLogin]
             throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).build());
         }
     }
@@ -134,32 +134,36 @@ public class SessionResource extends BaseResource {
     @DELETE
     public Response remove() {
         LogAction.logout(getUserId(), WebHelper.retrieveRemoteAddress(request));
-        request.getSession().removeAttribute(SessionHelper.USER_ID_KEY);
+        request.getSession().removeAttribute(SessionHelper.USER_ID_KEY); // &line[getSession]
         return Response.noContent().build();
     }
 
     @Path("token")
     @POST
+            // &begin[requestToken]
     public String requestToken(
             @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException {
-        Date currentExpiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY);
+        Date currentExpiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY); // &line[getSession]
         if (currentExpiration != null && currentExpiration.before(expiration)) {
             expiration = currentExpiration;
         }
-        return tokenManager.generateToken(getUserId(), expiration);
+        return tokenManager.generateToken(getUserId(), expiration); // &line[generateToken]
     }
+    // &end[requestToken]
 
     @PermitAll
     @Path("openid/auth")
     @GET
+            // &begin[openIdAuth]
     public Response openIdAuth() {
         return Response.seeOther(openIdProvider.createAuthUri()).build();
     }
+    // &end[openIdAuth]
 
     @PermitAll
     @Path("openid/callback")
     @GET
-    public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException {
+    public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException { // &line[requestToken]
         StringBuilder requestUrl = new StringBuilder(request.getRequestURL().toString());
         String queryString = request.getQueryString();
         String requestUri = requestUrl.append('?').append(queryString).toString();
