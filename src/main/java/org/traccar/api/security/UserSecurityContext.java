@@ -18,7 +18,7 @@ package org.traccar.api.security;
 import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
-// &begin[UserSecurityContext]
+// &begin[User]
 public class UserSecurityContext implements SecurityContext {
 
     private final UserPrincipal principal;
@@ -32,10 +32,12 @@ public class UserSecurityContext implements SecurityContext {
         return principal;
     }
 
+    // &begin[Role_Check]
     @Override
     public boolean isUserInRole(String role) {
         return true;
     }
+    // &end[Role_Check]
 
     @Override
     public boolean isSecure() {
@@ -43,10 +45,10 @@ public class UserSecurityContext implements SecurityContext {
     }
 
     @Override
-            // &begin[getAuthenticationScheme]
+            // &begin[Basic_Authentication]
     public String getAuthenticationScheme() {
         return BASIC_AUTH;
     }
-// &end[getAuthenticationScheme]
+// &end[Basic_Authentication]
 }
-// &end[UserSecurityContext]
+// &end[User]

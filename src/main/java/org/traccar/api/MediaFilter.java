@@ -60,17 +60,20 @@ public class MediaFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        // &begin[User_Based_Request_Authorization]
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         try {
-            HttpSession session = ((HttpServletRequest) request).getSession(false); // &line[getSession]
-            Long userId = null;
-            if (session != null) {
-                userId = (Long) session.getAttribute(SessionHelper.USER_ID_KEY); // &line[getAttribute]
+            HttpSession session = ((HttpServletRequest) request).getSession(false); // &line[Session]
+            Long userId = null; // &line[User]
+            if (session != null) { // &line[Session]
+                // &begin[User]
+                userId = (Long) session.getAttribute(SessionHelper.USER_ID_KEY); // &line[Session]
                 if (userId != null) {
-                    statisticsManager.registerRequest(userId);
+                    statisticsManager.registerRequest(userId); // &line[Access_Logging] 
                 }
             }
             if (userId == null) {
+                // &end[User]
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
@@ -81,17 +84,20 @@ public class MediaFilter implements Filter {
                 Device device = storage.getObject(Device.class, new Request(
                         new Columns.All(), new Condition.Equals("uniqueId", parts[1])));
                 if (device != null) {
-                    permissionsServiceProvider.get().checkPermission(Device.class, userId, device.getId()); // &line[checkPermission]
+                    permissionsServiceProvider.get().checkPermission(Device.class, userId, device.getId()); // &line[Permission_Check, User]
+                    // &end[User_Based_Request_Authorization]
                     chain.doFilter(request, response);
+                    // &begin[User_Based_Request_Authorization]
                     return;
                 }
             }
 
-            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN); // &line[sendError]
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         } catch (SecurityException | StorageException e) {
-            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN); // &line[setStatus]
+            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             e.printStackTrace(httpResponse.getWriter());
         }
+        // &end[User_Based_Request_Authorization]
     }
 
 }

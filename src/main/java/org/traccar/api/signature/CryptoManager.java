@@ -91,7 +91,7 @@ public class CryptoManager {
                     .generatePrivate(new PKCS8EncodedKeySpec(model.getPrivateKey())); // &line[KeyGeneration_PKCS8EncodedKeySpec_L, KeyGeneration_generatePrivate_L]
         } else {
             KeyPairGenerator generator = KeyPairGenerator.getInstance("EC"); // &line[KeyPairGenerator_getInstance]
-            generator.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom()); // &line[KeyGeneration_initialize_L, KeyGeneration_ECGenParameterSpec_L, SourceOfRandomness_SecureRandom_L]
+            generator.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom()); // &line[KeyGeneration_initialize_L, KeyGeneration_ECGenParameterSpec_L, Secure_Random]
             KeyPair pair = generator.generateKeyPair(); // &line[KeyGeneration_generateKeyPair_L]
 
 

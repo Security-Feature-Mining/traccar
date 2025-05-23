@@ -66,7 +66,8 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
             return;
         }
 
-        SecurityContext securityContext = null;  // &line[SecurityContext]
+        // &begin[User]
+        SecurityContext securityContext = null;
 
         try {
 
@@ -79,23 +80,23 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
                     if (loginResult != null) {
                         User user = loginResult.getUser();
                         statisticsManager.registerRequest(user.getId());
-                        securityContext = new UserSecurityContext( // &line[securityContext]
+                        securityContext = new UserSecurityContext(
                                 new UserPrincipal(user.getId(), loginResult.getExpiration()));
                     }
                 } catch (StorageException | GeneralSecurityException | IOException e) {
                     throw new WebApplicationException(e);
                 }
 
-            } else if (request.getSession() != null) { // &line[getSession]
+            } else if (request.getSession() != null) { // &line[Session]
 
-                Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY); // &line[getSession]
-                Date expiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY);
+                Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY); // &line[Session]
+                Date expiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY); // &line[Session_Timeout]
                 if (userId != null) {
                     User user = injector.getInstance(PermissionsService.class).getUser(userId);
                     if (user != null) {
                         user.checkDisabled();
                         statisticsManager.registerRequest(userId);
-                        securityContext = new UserSecurityContext(new UserPrincipal(userId, expiration));  // &line[securityContext]
+                        securityContext = new UserSecurityContext(new UserPrincipal(userId, expiration)); // &line[Session_Timeout]
                     }
                 }
 
@@ -106,7 +107,8 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
         }
 
         if (securityContext != null) {
-            requestContext.setSecurityContext(securityContext); // &line[setSecurityContext]
+            requestContext.setSecurityContext(securityContext);
+            // &end[User]
         } else {
             Method method = resourceInfo.getResourceMethod();
             if (!method.isAnnotationPresent(PermitAll.class)) {

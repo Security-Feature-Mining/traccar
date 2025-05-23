@@ -73,11 +73,11 @@ public final class Hashing {
         }
     }
 
-    private static final SecureRandom RANDOM = new SecureRandom(); // &line[SourceOfRandomness_SecureRandom_L]
+    private static final SecureRandom RANDOM = new SecureRandom(); // &line[Secure_Random]
     // &begin[createHash]
     public static HashingResult createHash(String password) {
         byte[] salt = new byte[SALT_SIZE];
-        RANDOM.nextBytes(salt);  // &line[SourceOfRandomness_SecureRandom_nextBytes_L]
+        RANDOM.nextBytes(salt);  // &line[Secure_Random]
         byte[] hash = function(password.toCharArray(), salt);
         return new HashingResult(
                 DataConverter.printHex(hash),
