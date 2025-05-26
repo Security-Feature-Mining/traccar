@@ -44,7 +44,7 @@ public class TeltonikaProtocolEncoder extends BaseProtocolEncoder {
         buf.writeInt(content.length);
         buf.writeBytes(content);
         buf.writeByte(1); // quantity
-        buf.writeInt(Checksum.crc16(Checksum.CRC16_IBM, buf.nioBuffer(8, buf.writerIndex() - 8))); // &line[Checksum_crc16]
+        buf.writeInt(Checksum.crc16(Checksum.CRC16_IBM, buf.nioBuffer(8, buf.writerIndex() - 8))); // &line[Checksum]
 
         return buf;
     }

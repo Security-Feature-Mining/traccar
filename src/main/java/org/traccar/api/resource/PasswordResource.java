@@ -38,6 +38,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+// &begin[Password_Definition]
 @Path("password")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -47,11 +48,12 @@ public class PasswordResource extends BaseResource {
     private MailManager mailManager;
 
     @Inject
-    private TokenManager tokenManager;
+    private TokenManager tokenManager; // &line[Token_Management]
 
     @Inject
     private TextTemplateFormatter textTemplateFormatter;
 
+    // &begin[Password_Reset]
     @Path("reset")
     @PermitAll
     @POST
@@ -67,7 +69,9 @@ public class PasswordResource extends BaseResource {
         }
         return Response.ok().build();
     }
+    // &end[Password_Reset]
 
+    // &begin[Password_Update]
     @Path("update")
     @PermitAll
     @POST
@@ -75,17 +79,19 @@ public class PasswordResource extends BaseResource {
             @FormParam("token") String token, @FormParam("password") String password)
             throws StorageException, GeneralSecurityException, IOException {
 
-        long userId = tokenManager.verifyToken(token).getUserId(); // &line[verifyToken]
+        long userId = tokenManager.verifyToken(token).getUserId(); // &line[Token_Validation]
         User user = storage.getObject(User.class, new Request(
                 new Columns.All(), new Condition.Equals("id", userId)));
         if (user != null) {
-            user.setPassword(password); // &line[setPassword]
+            user.setPassword(password);
             storage.updateObject(user, new Request(
-                    new Columns.Include("hashedPassword", "salt"),
+                    new Columns.Include("hashedPassword", "salt"), // &line[Salting]
                     new Condition.Equals("id", userId)));
             return Response.ok().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
+    // &end[Password_Update]
 
 }
+// &end[Password_Definition]

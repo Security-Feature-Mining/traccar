@@ -48,24 +48,24 @@ public class ExtendedObjectResource<T extends BaseModel> extends BaseObjectResou
         var conditions = new LinkedList<Condition>();
 
         if (all) {
-            if (permissionsService.notAdmin(getUserId())) {
+            if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check] 
                 conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
             }
         } else {
             if (userId == 0) {
                 conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
             } else {
-                permissionsService.checkUser(getUserId(), userId);      // &line[checkUser]
+                permissionsService.checkUser(getUserId(), userId);      // &line[Permission_Check]
                 conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[excludeGroups]
             }
         }
 
         if (groupId > 0) {
-            permissionsService.checkPermission(Group.class, getUserId(), groupId); // &line[checkPermission]
+            permissionsService.checkPermission(Group.class, getUserId(), groupId); // &line[Permission_Check]
             conditions.add(new Condition.Permission(Group.class, groupId, baseClass).excludeGroups()); // &line[excludeGroups]
         }
         if (deviceId > 0) {
-            permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[checkPermission]
+            permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
             conditions.add(new Condition.Permission(Device.class, deviceId, baseClass).excludeGroups()); // &line[excludeGroups]
         }
 

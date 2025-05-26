@@ -107,7 +107,7 @@ public class TeltonikaProtocolDecoder extends BaseProtocolDecoder {
             response.writeShort(size);
             response.writeByte(1); // nod
             response.writeShort(0);
-            response.writeShort(Checksum.crc16( // &line[Checksum_crc16]
+            response.writeShort(Checksum.crc16( // &line[Checksum]
                     Checksum.CRC16_IBM, response.nioBuffer(8, response.readableBytes() - 10)));
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }

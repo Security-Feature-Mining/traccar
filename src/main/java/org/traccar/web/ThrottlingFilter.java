@@ -27,6 +27,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+// &begin[Throttling_Filter]
 @Singleton
 public class ThrottlingFilter extends DoSFilter {
 
@@ -42,13 +43,18 @@ public class ThrottlingFilter extends DoSFilter {
         setMaxRequestMs(config.getInteger(Keys.WEB_MAX_REQUEST_SECONDS) * 1000L);
     }
 
+    // &begin[User]
     @Override
     protected String extractUserId(ServletRequest request) {
-        HttpSession session = ((HttpServletRequest) request).getSession(false); // &line[getSession]
+        // &begin[User_Session]
+        HttpSession session = ((HttpServletRequest) request).getSession(false);
         if (session != null) {
             var userId = session.getAttribute("userId");
+            // &end[User_Session]
             return userId != null ? userId.toString() : null;
         }
         return null;
     }
+    // &end[User]
 }
+// &end[Throttling_Filter]

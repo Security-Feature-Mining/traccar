@@ -68,7 +68,7 @@ public class PstProtocolDecoder extends BaseProtocolDecoder {
             response.writeInt((int) index);
             response.writeByte(MSG_ACK);
             response.writeByte(type);
-            response.writeShort(Checksum.crc16(Checksum.CRC16_XMODEM, response.nioBuffer())); // &line[Checksum_crc16]
+            response.writeShort(Checksum.crc16(Checksum.CRC16_XMODEM, response.nioBuffer())); // &line[Checksum]
 
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
 

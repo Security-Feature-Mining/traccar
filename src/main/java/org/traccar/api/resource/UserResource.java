@@ -49,6 +49,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.LinkedList;
 
+// &begin[User]
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -69,15 +70,17 @@ public class UserResource extends BaseObjectResource<User> {
             @QueryParam("userId") long userId, @QueryParam("deviceId") long deviceId) throws StorageException {
         var conditions = new LinkedList<Condition>();
         if (userId > 0) {
-            permissionsService.checkUser(getUserId(), userId); // &line[checkUser]
+            permissionsService.checkUser(getUserId(), userId);
             conditions.add(new Condition.Permission(User.class, userId, ManagedUser.class).excludeGroups());
-        } else if (permissionsService.notAdmin(getUserId())) { // &line[notAdmin]
+            // &begin[Role_Check]
+        } else if (permissionsService.notAdmin(getUserId())) {
             conditions.add(new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups());
         }
         if (deviceId > 0) {
-            permissionsService.checkManager(getUserId()); // &line[checkManager]
+            permissionsService.checkManager(getUserId());
             conditions.add(new Condition.Permission(User.class, Device.class, deviceId).excludeGroups());
         }
+        // &end[Role_Check]
         return storage.getObjects(baseClass, new Request(
                 new Columns.All(), Condition.merge(conditions), new Order("name")));
     }
@@ -87,47 +90,50 @@ public class UserResource extends BaseObjectResource<User> {
     @POST
     public Response add(User entity) throws StorageException {
         User currentUser = getUserId() > 0 ? permissionsService.getUser(getUserId()) : null;
-        if (currentUser == null || !currentUser.getAdministrator()) {  // &line[getAdministrator]
-            permissionsService.checkUserUpdate(getUserId(), new User(), entity); // &line[checkUserUpdate]
+        if (currentUser == null || !currentUser.getAdministrator()) {  // &line[Role_Check]
+            permissionsService.checkUserUpdate(getUserId(), new User(), entity); // &line[Permission_Check]
             if (currentUser != null && currentUser.getUserLimit() != 0) {
                 int userLimit = currentUser.getUserLimit();
                 if (userLimit > 0) {
                     int userCount = storage.getObjects(baseClass, new Request(
                             new Columns.All(),
-                            new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups()))  // &line[excludeGroups]
+                            new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups()))  // &line[Permission_Check]
                             .size();
-                    if (userCount >= userLimit) {
+                    if (userCount >= userLimit) { // &line[DISCUSS]
                         throw new SecurityException("Manager user limit reached");
                     }
                 }
             } else {
                 if (UserUtil.isEmpty(storage)) {
-                    entity.setAdministrator(true);  // &line[setAdministrator]
+                    entity.setAdministrator(true);  // &line[Role_Assignment]
                 } else if (!permissionsService.getServer().getRegistration()) {
                     throw new SecurityException("Registration disabled");
                 }
-                if (permissionsService.getServer().getBoolean(Keys.WEB_TOTP_FORCE.getKey())  // &line[getKey]
-                        && entity.getTotpKey() == null) { // &line[getTotpKey]
+                // &begin[TOTP_Authentication]
+                if (permissionsService.getServer().getBoolean(Keys.WEB_TOTP_FORCE.getKey())
+                        && entity.getTotpKey() == null) {
                     throw new SecurityException("One-time password key is required");
                 }
+                // &end[TOTP_Authentication]
                 UserUtil.setUserDefaults(entity, config);
             }
         }
 
         entity.setId(storage.addObject(entity, new Request(new Columns.Exclude("id"))));
         storage.updateObject(entity, new Request(
-                new Columns.Include("hashedPassword", "salt"),
+                new Columns.Include("hashedPassword", "salt"), // &line[Salting, Password]
                 new Condition.Equals("id", entity.getId())));
 
-        LogAction.create(getUserId(), entity); // &line[LogAction_create]
+        LogAction.create(getUserId(), entity); // &line[User_Creation_Logging]
 
         if (currentUser != null && currentUser.getUserLimit() != 0) {
-            storage.addPermission(new Permission(User.class, getUserId(), ManagedUser.class, entity.getId())); // &line[addPermission]
-            LogAction.link(getUserId(), User.class, getUserId(), ManagedUser.class, entity.getId());
+            storage.addPermission(new Permission(User.class, getUserId(), ManagedUser.class, entity.getId())); // &line[Permission_Assignment]
+            LogAction.link(getUserId(), User.class, getUserId(), ManagedUser.class, entity.getId()); // &line[Permission_Logging]
         }
         return Response.ok(entity).build();
     }
 
+    // &begin[Session_Invalidation]
     @Path("{id}")
     @DELETE
     public Response remove(@PathParam("id") long id) throws Exception {
@@ -137,17 +143,19 @@ public class UserResource extends BaseObjectResource<User> {
         }
         return response;
     }
+    // &end[Session_Invalidation]
 
+    // &begin[TOTP_Key_Generation]
     @Path("totp")
     @PermitAll
     @POST
-            // &begin[generateTotpKey]
     public String generateTotpKey() throws StorageException {
         if (!permissionsService.getServer().getBoolean(Keys.WEB_TOTP_ENABLE.getKey())) {
             throw new SecurityException("One-time password is disabled");
         }
-        return new GoogleAuthenticator().createCredentials().getKey(); // &end[GoogleAuthenticator_createCredentials_getKey]
+        return new GoogleAuthenticator().createCredentials().getKey();
     }
-    // &end[generateTotpKey]
+    // &end[TOTP_Key_Generation]
 
 }
+// &end[User]

@@ -1,23 +1,43 @@
 Security_Features
     Access_Control
 		Authentication
+		    Token_Validation
+		    Token_Expiration
+		    Ldap_Authentication
+		    Bearer_Authentication
 			Credentials
 		        Basic_Authentication
 			    User
+			        User_Login
+                        Admin_Login
+                    User_Logout
+			    Password
+			        Password_Definition
+			        Password_Update
+			        Password_Reset
+			        Password_Validation
 			One_Time_Password
 			Certificate_Authentication
 			Multifactor_Authentication
+			    TOTP_Authentication
 			Single_Sign_On
+			    OpenID_Authentication
 		Authorization
 		    Permission_Check
+		    Permission_Assignment
+		    Permission_Definition
+		    Permission_Invalidation
 		    User_Based_Request_Authorization
 			Access_Quota_Limitation
+			    Throttling_Filter
 			Attribute_based_Access_Control
 			Discretionary_Access_Control
 			Mandatory_Access_Control
 			Lattice_based_Access_Control
 			Location_based_Access_Control
 			Role_based_Access_Control
+			    Role_Assignment
+			    Role_Definition
 			    Role_Check
 			Rule_based_Access_Control
 			Timed_Access_Control
@@ -32,8 +52,12 @@ Security_Features
 			Asymmetric_Key_Cryptography
 			Hybrid_Cryptosystems
 		Cryptographic_Hashing
+		    Sha1_Hashing
+		    Salting
 		Key_Management
 			Key_Generation
+			    PBKDF2_Key_Generation
+			    TOTP_Key_Generation
 			Key_Distribution
 			Group_Key_Management
 			Key_Storage
@@ -47,6 +71,12 @@ Security_Features
     Security_Monitoring
 		Logging
 		    Access_Logging
+		    Login_Logging
+		    Edit_Logging
+		    Link_Logging
+		    Create_Object_Logging
+		    Permission_Logging
+		    User_Creation_Logging
 		Automated_Response
 		History_Maintenance
     Secure_Data_Handling
@@ -68,12 +98,20 @@ Security_Features
 			    Secure_Random
     System_State_Protection
 		Resource_Management
+		    Read_Write_Lock
 		System_State_Validation
+		    Checksum
+		    Imei_Validation
+		    Permission_Type_Validation
+		    Invalidate_Object
 		Session_Management
+		    User_Session
 		    Session
+		    Session_Invalidation
 			Replay_Attack_Prevention
 			Session_Fixation_Protection
 			Session_Takeover_Prevention
 			Session_Timeout
 		State_Synchronization
     Miscellaneous
+        DISCUSS

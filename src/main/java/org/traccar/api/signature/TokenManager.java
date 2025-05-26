@@ -31,24 +31,30 @@ import java.util.concurrent.TimeUnit;
 // &begin[TokenManager]
 public class TokenManager {
 
-    private static final int DEFAULT_EXPIRATION_DAYS = 7;
+    private static final int DEFAULT_EXPIRATION_DAYS = 7; // &line[Session_Timeout]
 
     private final ObjectMapper objectMapper;
     private final CryptoManager cryptoManager;
 
     public static class TokenData {
+        // &begin[User]
         @JsonProperty("u")
         private long userId;
+        // &end[User]
+        // &begin[Session_Timeout]
         @JsonProperty("e")
         private Date expiration;
-
+        // &end[Session_Timeout]
+        // &begin[User]
         public long getUserId() {
             return userId;
         }
-
+        // &end[User]
+        // &begin[Session_Timeout]
         public Date getExpiration() {
             return expiration;
         }
+        // &end[Session_Timeout]
     }
 
     @Inject
@@ -58,18 +64,20 @@ public class TokenManager {
     }
     // &begin[generateToken]
     public String generateToken(long userId) throws IOException, GeneralSecurityException, StorageException {
-        return generateToken(userId, null);
+        return generateToken(userId, null); // &line[User] 
     }
 
     public String generateToken(
-            long userId, Date expiration) throws IOException, GeneralSecurityException, StorageException {
+            long userId, Date expiration) throws IOException, GeneralSecurityException, StorageException { // &line[User] 
         TokenData data = new TokenData();
-        data.userId = userId;
+        data.userId = userId; // &line[User]
+        // &begin[Session_Timeout]
         if (expiration != null) {
             data.expiration = expiration;
         } else {
             data.expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(DEFAULT_EXPIRATION_DAYS));
         }
+        // &end[Session_Timeout]
         byte[] encoded = objectMapper.writeValueAsBytes(data);
         return Base64.encodeBase64URLSafeString(cryptoManager.sign(encoded));
     }
@@ -79,9 +87,11 @@ public class TokenManager {
     public TokenData verifyToken(String token) throws IOException, GeneralSecurityException, StorageException {
         byte[] encoded = cryptoManager.verify(Base64.decodeBase64(token)); // &line[verify]
         TokenData data = objectMapper.readValue(encoded, TokenData.class);
+        // &begin[Session_Timeout]
         if (data.expiration.before(new Date())) {
             throw new SecurityException("Token has expired");
         }
+        // &end[Session_Timeout]
         return data;
     }
 // &end[verifyToken]

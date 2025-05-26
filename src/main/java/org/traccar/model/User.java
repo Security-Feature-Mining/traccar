@@ -25,6 +25,7 @@ import org.traccar.storage.StorageName;
 import java.util.Date;
 import java.util.HashMap;
 
+// &begin[User]
 @StorageName("tc_users")
 public class User extends ExtendedModel implements UserRestrictions, Disableable {
 
@@ -79,6 +80,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.readonly = readonly;
     }
 
+    // &begin[Role_Definition]
     private boolean administrator;
 
     @QueryIgnore
@@ -94,6 +96,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setAdministrator(boolean administrator) {
         this.administrator = administrator;
     }
+    // &end[Role_Definition]
 
     private String map;
 
@@ -262,22 +265,23 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setTemporary(boolean temporary) {
         this.temporary = temporary;
     }
-
+    // &begin[Password]
     @QueryIgnore
     public String getPassword() {
         return null;
     }
 
     @QueryIgnore
-            // &begin[setPassword]
     public void setPassword(String password) {
         if (password != null && !password.isEmpty()) {
-            Hashing.HashingResult hashingResult = Hashing.createHash(password); // &line[createHash]
-            hashedPassword = hashingResult.getHash(); // &line[getHash]
-            salt = hashingResult.getSalt(); // &line[getSalt]
+            // &begin[Sha1_Hashing]
+            Hashing.HashingResult hashingResult = Hashing.createHash(password);
+            hashedPassword = hashingResult.getHash();
+            salt = hashingResult.getSalt(); // &line[Salting]
+            // &end[Sha1_Hashing]
         }
     }
-    // &end[setPassword]
+
 
     private String hashedPassword;
 
@@ -292,6 +296,8 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.hashedPassword = hashedPassword;
     }
 
+    // &end[Password]
+    // &begin[Salting]
     private String salt;
 
     @JsonIgnore
@@ -304,11 +310,14 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setSalt(String salt) {
         this.salt = salt;
     }
-    // &begin[isPasswordValid]
+
+    // &begin[Password_Validation]
     public boolean isPasswordValid(String password) {
-        return Hashing.validatePassword(password, hashedPassword, salt);  // &line[validatePassword]
+        return Hashing.validatePassword(password, hashedPassword, salt);
     }
-    // &end[isPasswordValid]
+    // &end[Password_Validation]
+
+    // &end[Salting]
     public boolean compare(User other, String... exclusions) {
         if (!EqualsBuilder.reflectionEquals(this, other, "attributes", "hashedPassword", "salt")) {
             return false;
@@ -323,3 +332,4 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     }
 
 }
+// &end[User]

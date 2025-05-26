@@ -118,14 +118,14 @@ public class DeviceResource extends BaseObjectResource<Device> {
             var conditions = new LinkedList<Condition>();
 
             if (all) {
-                if (permissionsService.notAdmin(getUserId())) { // &line[notAdmin]
+                if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check]
                     conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
                 }
             } else {
                 if (userId == 0) {
                     conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
                 } else {
-                    permissionsService.checkUser(getUserId(), userId); // &line[checkUser]
+                    permissionsService.checkUser(getUserId(), userId); // &line[Permission_Check]
                     conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups());
                 }
             }
@@ -139,8 +139,8 @@ public class DeviceResource extends BaseObjectResource<Device> {
     @Path("{id}/accumulators")
     @PUT
     public Response updateAccumulators(DeviceAccumulators entity) throws Exception {
-        permissionsService.checkPermission(Device.class, getUserId(), entity.getDeviceId()); // &line[checkPermission]
-        permissionsService.checkEdit(getUserId(), Device.class, false, false); // &line[checkEdit]
+        permissionsService.checkPermission(Device.class, getUserId(), entity.getDeviceId()); // &line[Permission_Check]
+        permissionsService.checkEdit(getUserId(), Device.class, false, false); // &line[Permission_Check]
 
         Position position = storage.getObject(Position.class, new Request(
                 new Columns.All(), new Condition.LatestPositions(entity.getDeviceId())));
@@ -198,7 +198,7 @@ public class DeviceResource extends BaseObjectResource<Device> {
                 new Columns.All(),
                 new Condition.And(
                         new Condition.Equals("id", deviceId),
-                        new Condition.Permission(User.class, getUserId(), Device.class))));
+                        new Condition.Permission(User.class, getUserId(), Device.class)))); // &line[Permission_Check, DISCUSS]
         if (device != null) {
             String name = "device";
             String extension = imageExtension(type);
@@ -235,9 +235,11 @@ public class DeviceResource extends BaseObjectResource<Device> {
         if (user.getTemporary()) {
             throw new SecurityException("Temporary user");  // &line[SecurityExceptionTempUser]
         }
-        if (user.getExpirationTime() != null && user.getExpirationTime().before(expiration)) { // &line[getExpirationTime]
-            expiration = user.getExpirationTime(); // &line[getExpirationTime]
+        // &begin[Token_Expiration]
+        if (user.getExpirationTime() != null && user.getExpirationTime().before(expiration)) {
+            expiration = user.getExpirationTime();
         }
+        // &end[Token_Expiration]
 
         Device device = storage.getObject(Device.class, new Request(
                 new Columns.All(),
@@ -261,10 +263,10 @@ public class DeviceResource extends BaseObjectResource<Device> {
 
             share.setId(storage.addObject(share, new Request(new Columns.Exclude("id"))));
 
-            storage.addPermission(new Permission(User.class, share.getId(), Device.class, deviceId)); // &line[addPermission]
+            storage.addPermission(new Permission(User.class, share.getId(), Device.class, deviceId)); // &line[Permission_Assignment]
         }
 
-        return tokenManager.generateToken(share.getId(), expiration); // &line[generateToken]
+        return tokenManager.generateToken(share.getId(), expiration); // &line[Token_Expiration]
     }
 
 }

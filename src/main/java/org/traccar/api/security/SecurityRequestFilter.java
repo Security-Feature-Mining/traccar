@@ -76,7 +76,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
 
                 try {
                     String[] auth = authHeader.split(" ");
-                    LoginResult loginResult = loginService.login(auth[0], auth[1]); // &line[login]
+                    LoginResult loginResult = loginService.login(auth[0], auth[1]); // &line[User_Login]
                     if (loginResult != null) {
                         User user = loginResult.getUser();
                         statisticsManager.registerRequest(user.getId());
@@ -87,9 +87,9 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
                     throw new WebApplicationException(e);
                 }
 
-            } else if (request.getSession() != null) { // &line[Session]
+            } else if (request.getSession() != null) { // &line[User_Session]
 
-                Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY); // &line[Session]
+                Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY); // &line[User_Session]
                 Date expiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY); // &line[Session_Timeout]
                 if (userId != null) {
                     User user = injector.getInstance(PermissionsService.class).getUser(userId);

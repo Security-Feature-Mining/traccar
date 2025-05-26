@@ -59,7 +59,7 @@ public class TotemProtocolEncoder extends StringProtocolEncoder {
         String commandString = formatContent(command);
         String builtCommand = String.format("$$%04dCF%s", 10 + commandString.getBytes().length, commandString);
 
-        return String.format("%s%02X", builtCommand, Checksum.xor(builtCommand)); // &line[Checksum_xor]
+        return String.format("%s%02X", builtCommand, Checksum.xor(builtCommand)); // &line[Checksum]
 
     }
 

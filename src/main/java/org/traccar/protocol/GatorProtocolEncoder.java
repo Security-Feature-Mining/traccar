@@ -60,7 +60,7 @@ public class GatorProtocolEncoder extends BaseProtocolEncoder {
             buf.writeBytes(content);
         }
 
-        int checksum = Checksum.xor(buf.nioBuffer()); // &line[Checksum_crc16]
+        int checksum = Checksum.xor(buf.nioBuffer()); // &line[Checksum]
         buf.writeByte(checksum);
 
         buf.writeByte(0x0D);

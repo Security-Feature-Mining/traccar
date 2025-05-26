@@ -30,7 +30,7 @@ public class FifotrackProtocolEncoder extends StringProtocolEncoder {
         String uniqueId = getUniqueId(command.getDeviceId());
         int length = 1 + uniqueId.length() + 3 + content.length();
         String result = String.format("##%02d,%s,1,%s*", length, uniqueId, content);
-        result += Checksum.sum(result) + "\r\n"; // &line[Checksum_sum]
+        result += Checksum.sum(result) + "\r\n"; // &line[Checksum]
         return result;
     }
 

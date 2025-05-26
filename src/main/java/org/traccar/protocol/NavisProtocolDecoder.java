@@ -535,8 +535,8 @@ public class NavisProtocolDecoder extends BaseProtocolDecoder {
             header.writeIntLE((int) deviceUniqueId);
             header.writeIntLE((int) serverId);
             header.writeShortLE(data.readableBytes());
-            header.writeByte(Checksum.xor(data.nioBuffer())); // &line[Checksum_xor]
-            header.writeByte(Checksum.xor(header.nioBuffer())); // &line[Checksum_xor]
+            header.writeByte(Checksum.xor(data.nioBuffer())); // &line[Checksum]
+            header.writeByte(Checksum.xor(header.nioBuffer())); // &line[Checksum]
 
             channel.writeAndFlush(new NetworkMessage(Unpooled.wrappedBuffer(header, data), channel.remoteAddress()));
         }
@@ -544,7 +544,7 @@ public class NavisProtocolDecoder extends BaseProtocolDecoder {
 
     private void sendFlexReply(Channel channel, ByteBuf data) {
         if (channel != null) {
-            data.writeByte(Checksum.crc8(Checksum.CRC8_EGTS, data.nioBuffer())); // &line[Checksum_crc8]
+            data.writeByte(Checksum.crc8(Checksum.CRC8_EGTS, data.nioBuffer())); // &line[Checksum]
             channel.writeAndFlush(new NetworkMessage(data, channel.remoteAddress()));
         }
     }

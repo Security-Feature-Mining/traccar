@@ -37,53 +37,60 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+// &begin[Permission_Definition]
 @Path("permissions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class PermissionsResource  extends BaseResource {
+public class PermissionsResource extends BaseResource {
 
     @Inject
     private CacheManager cacheManager;
 
-// &begin[checkPermission_Custom]
+    // &begin[Permission_Check]
     private void checkPermission(Permission permission) throws StorageException {
 
-        if (permissionsService.notAdmin(getUserId())) { // &line[notAdmin]
-            permissionsService.checkPermission(permission.getOwnerClass(), getUserId(), permission.getOwnerId()); // &line[checkPermission]
-            permissionsService.checkPermission(permission.getPropertyClass(), getUserId(), permission.getPropertyId()); // &line[checkPermission]
+        if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check]
+            permissionsService.checkPermission(permission.getOwnerClass(), getUserId(), permission.getOwnerId());
+            permissionsService.checkPermission(permission.getPropertyClass(), getUserId(), permission.getPropertyId());
         }
     }
-    // &end[checkPermission_Custom]
-    // &begin[checkPermissionTypes]
+
+    // &end[Permission_Check]
+    // &begin[Permission_Type_Validation]
     private void checkPermissionTypes(List<LinkedHashMap<String, Long>> entities) {
         Set<String> keys = null;
-        for (LinkedHashMap<String, Long> entity: entities) {
-            if (keys != null & !entity.keySet().equals(keys)) { // &line[keySet]
+        for (LinkedHashMap<String, Long> entity : entities) {
+            if (keys != null & !entity.keySet().equals(keys)) {
                 throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).build());
             }
             keys = entity.keySet();
         }
     }
-    // &end[checkPermissionTypes]
+    // &end[Permission_Type_Validation]
 
+    // &begin[Permission_Assignment]
     @Path("bulk")
     @POST
     public Response add(List<LinkedHashMap<String, Long>> entities) throws Exception {
-        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly); // &line[checkRestriction]
-        checkPermissionTypes(entities); // &line[checkPermissionTypes]
-        for (LinkedHashMap<String, Long> entity: entities) {
+        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly); // &line[Permission_Check]
+        checkPermissionTypes(entities); // &line[Permission_Type_Validation]
+        for (LinkedHashMap<String, Long> entity : entities) {
             Permission permission = new Permission(entity);
-            checkPermission(permission); // &line[checkPermission_Custom]
-            storage.addPermission(permission); // &line[addPermission]
-            cacheManager.invalidatePermission( // &line[invalidatePermission]
+            checkPermission(permission); // &line[Permission_Check]
+            storage.addPermission(permission);
+            // &begin[Permission_Invalidation]
+            cacheManager.invalidatePermission(
                     true,
                     permission.getOwnerClass(), permission.getOwnerId(),
                     permission.getPropertyClass(), permission.getPropertyId(),
                     true);
+            // &end[Permission_Invalidation]
+            // &begin[Permission_Logging]
             LogAction.link(getUserId(),
                     permission.getOwnerClass(), permission.getOwnerId(),
                     permission.getPropertyClass(), permission.getPropertyId());
         }
+        // &end[Permission_Logging]
         return Response.noContent().build();
     }
 
@@ -91,24 +98,28 @@ public class PermissionsResource  extends BaseResource {
     public Response add(LinkedHashMap<String, Long> entity) throws Exception {
         return add(Collections.singletonList(entity));
     }
+    // &end[Permission_Assignment]
 
+    // &begin[Permission_Invalidation]
     @DELETE
     @Path("bulk")
     public Response remove(List<LinkedHashMap<String, Long>> entities) throws Exception {
-        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly);  // &line[checkRestriction]
-        checkPermissionTypes(entities); // &line[checkPermissionTypes]
-        for (LinkedHashMap<String, Long> entity: entities) {
+        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly);  // &line[Permission_Check]
+        checkPermissionTypes(entities); // &line[Permission_Type_Validation]
+        for (LinkedHashMap<String, Long> entity : entities) {
             Permission permission = new Permission(entity);
-            checkPermission(permission); // &line[checkPermission_Custom]
-            storage.removePermission(permission); // &line[removePermission]
-            cacheManager.invalidatePermission( // &line[invalidatePermission]
+            checkPermission(permission); // &line[Permission_Check]
+            storage.removePermission(permission);
+            cacheManager.invalidatePermission(
                     true,
                     permission.getOwnerClass(), permission.getOwnerId(),
                     permission.getPropertyClass(), permission.getPropertyId(),
                     false);
+            // &begin[Permission_Logging]
             LogAction.unlink(getUserId(),
                     permission.getOwnerClass(), permission.getOwnerId(),
                     permission.getPropertyClass(), permission.getPropertyId());
+            // &end[Permission_Logging]
         }
         return Response.noContent().build();
     }
@@ -117,5 +128,7 @@ public class PermissionsResource  extends BaseResource {
     public Response remove(LinkedHashMap<String, Long> entity) throws Exception {
         return remove(Collections.singletonList(entity));
     }
+    // &end[Permission_Invalidation]
 
 }
+// &end[Permission_Definition]

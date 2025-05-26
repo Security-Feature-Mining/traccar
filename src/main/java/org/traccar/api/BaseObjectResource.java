@@ -56,7 +56,7 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
     @Path("{id}")
     @GET
     public Response getSingle(@PathParam("id") long id) throws StorageException {
-        permissionsService.checkPermission(baseClass, getUserId(), id);
+        permissionsService.checkPermission(baseClass, getUserId(), id); // &line[Permission_Check]
         T entity = storage.getObject(baseClass, new Request(
                 new Columns.All(), new Condition.Equals("id", id)));
         if (entity != null) {
@@ -68,16 +68,18 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
 
     @POST
     public Response add(T entity) throws Exception {
-        permissionsService.checkEdit(getUserId(), entity, true, false);
+        permissionsService.checkEdit(getUserId(), entity, true, false); // &line[Permission_Check]
 
         entity.setId(storage.addObject(entity, new Request(new Columns.Exclude("id"))));
-        LogAction.create(getUserId(), entity);
+        LogAction.create(getUserId(), entity); // &line[User, Create_Object_Logging]
 
-        if (getUserId() != ServiceAccountUser.ID) {
-            storage.addPermission(new Permission(User.class, getUserId(), baseClass, entity.getId())); // &line[addPermission]
-            cacheManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true); // &line[invalidatePermission]
-            connectionManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true); // &line[invalidatePermission]
-            LogAction.link(getUserId(), User.class, getUserId(), baseClass, entity.getId());
+        if (getUserId() != ServiceAccountUser.ID) { // &line[User]
+            storage.addPermission(new Permission(User.class, getUserId(), baseClass, entity.getId())); // &line[Permission_Assignment]
+            // &begin[Permission_Invalidation]
+            cacheManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true);
+            connectionManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true); 
+            // &end[Permission_Invalidation]
+            LogAction.link(getUserId(), User.class, getUserId(), baseClass, entity.getId()); // &line[Link_Logging]
         }
 
         return Response.ok(entity).build();
@@ -86,13 +88,13 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
     @Path("{id}")
     @PUT
     public Response update(T entity) throws Exception {
-        permissionsService.checkPermission(baseClass, getUserId(), entity.getId()); // &line[checkPermission]
+        permissionsService.checkPermission(baseClass, getUserId(), entity.getId()); // &line[User, Permission_Check]
 
         boolean skipReadonly = false;
         if (entity instanceof User after) {
             User before = storage.getObject(User.class, new Request(
                     new Columns.All(), new Condition.Equals("id", entity.getId())));
-            permissionsService.checkUserUpdate(getUserId(), before, (User) entity); // &line[checkUserUpdate]
+            permissionsService.checkUserUpdate(getUserId(), before, (User) entity); // &line[Permission_Check]
             skipReadonly = permissionsService.getUser(getUserId())
                     .compare(after, "notificationTokens", "termsAccepted");
         } else if (entity instanceof Group group) {
@@ -101,20 +103,22 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
             }
         }
 
-        permissionsService.checkEdit(getUserId(), entity, false, skipReadonly); // &line[checkEdit]
+        permissionsService.checkEdit(getUserId(), entity, false, skipReadonly); // &line[Permission_Check]
 
         storage.updateObject(entity, new Request(
                 new Columns.Exclude("id"),
                 new Condition.Equals("id", entity.getId())));
+        // &begin[User]
         if (entity instanceof User user) {
-            if (user.getHashedPassword() != null) { // &line[getHashedPassword]
+            if (user.getHashedPassword() != null) { // &line[Password]
+                // &end[User]
                 storage.updateObject(entity, new Request(
-                        new Columns.Include("hashedPassword", "salt"),
+                        new Columns.Include("hashedPassword", "salt"), // &line[Password, Salting]
                         new Condition.Equals("id", entity.getId())));
             }
         }
-        cacheManager.invalidateObject(true, entity.getClass(), entity.getId(), ObjectOperation.UPDATE);  // &line[invalidateObject]
-        LogAction.edit(getUserId(), entity);
+        cacheManager.invalidateObject(true, entity.getClass(), entity.getId(), ObjectOperation.UPDATE);  // &line[Invalidate_Object]
+        LogAction.edit(getUserId(), entity); // &line[Edit_Logging]
 
         return Response.ok(entity).build();
     }
@@ -122,11 +126,13 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
     @Path("{id}")
     @DELETE
     public Response remove(@PathParam("id") long id) throws Exception {
-        permissionsService.checkPermission(baseClass, getUserId(), id);  // &line[checkPermission]
-        permissionsService.checkEdit(getUserId(), baseClass, false, false); // &line[checkEdit]
+        // &begin[Permission_Check]
+        permissionsService.checkPermission(baseClass, getUserId(), id);
+        permissionsService.checkEdit(getUserId(), baseClass, false, false);
+        // &end[Permission_Check]
 
         storage.removeObject(baseClass, new Request(new Condition.Equals("id", id)));
-        cacheManager.invalidateObject(true, baseClass, id, ObjectOperation.DELETE); // &line[invalidateObject]
+        cacheManager.invalidateObject(true, baseClass, id, ObjectOperation.DELETE); // &line[Invalidate_Object]
 
         LogAction.remove(getUserId(), baseClass, id);
 

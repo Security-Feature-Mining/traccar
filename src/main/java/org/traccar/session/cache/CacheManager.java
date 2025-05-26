@@ -64,7 +64,7 @@ public class CacheManager implements BroadcastInterface {
     private final Storage storage;
     private final BroadcastService broadcastService;
 
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock(); // &line[Read_Write_Lock]
 
     private final CacheGraph graph = new CacheGraph();
 
@@ -92,56 +92,56 @@ public class CacheManager implements BroadcastInterface {
 
     public <T extends BaseModel> T getObject(Class<T> clazz, long id) {
         try {
-            lock.readLock().lock();
+            lock.readLock().lock(); // &line[Read_Write_Lock]
             return graph.getObject(clazz, id);
         } finally {
-            lock.readLock().unlock();
+            lock.readLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public <T extends BaseModel> Set<T> getDeviceObjects(long deviceId, Class<T> clazz) {
         try {
-            lock.readLock().lock();
+            lock.readLock().lock(); // &line[Read_Write_Lock]
             return graph.getObjects(Device.class, deviceId, clazz, Set.of(Group.class), true)
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
-            lock.readLock().unlock();
+            lock.readLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public Position getPosition(long deviceId) {
         try {
-            lock.readLock().lock();
+            lock.readLock().lock(); // &line[Read_Write_Lock]
             return devicePositions.get(deviceId);
         } finally {
-            lock.readLock().unlock();
+            lock.readLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public Server getServer() {
         try {
-            lock.readLock().lock();
+            lock.readLock().lock(); // &line[Read_Write_Lock]
             return server;
         } finally {
-            lock.readLock().unlock();
+            lock.readLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public Set<User> getNotificationUsers(long notificationId, long deviceId) {
         try {
-            lock.readLock().lock();
+            lock.readLock().lock(); // &line[Read_Write_Lock]
             Set<User> deviceUsers = getDeviceObjects(deviceId, User.class);
             return graph.getObjects(Notification.class, notificationId, User.class, Set.of(), false)
                     .filter(deviceUsers::contains)
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
-            lock.readLock().unlock();
+            lock.readLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public Set<Notification> getDeviceNotifications(long deviceId) {
         try {
-            lock.readLock().lock();
+            lock.readLock().lock(); // &line[Read_Write_Lock]
             var direct = graph.getObjects(Device.class, deviceId, Notification.class, Set.of(Group.class), true)
                     .map(BaseModel::getId)
                     .collect(Collectors.toUnmodifiableSet());
@@ -149,13 +149,13 @@ public class CacheManager implements BroadcastInterface {
                     .filter(notification -> notification.getAlways() || direct.contains(notification.getId()))
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
-            lock.readLock().unlock();
+            lock.readLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public void addDevice(long deviceId, Object key) throws Exception {
         try {
-            lock.writeLock().lock();
+            lock.writeLock().lock(); // &line[Read_Write_Lock]
             var references = deviceReferences.computeIfAbsent(deviceId, k -> new HashSet<>());
             if (references.isEmpty()) {
                 Device device = storage.getObject(Device.class, new Request(
@@ -170,13 +170,13 @@ public class CacheManager implements BroadcastInterface {
             references.add(key);
             LOGGER.debug("Cache add device {} references {} key {}", deviceId, references.size(), key);
         } finally {
-            lock.writeLock().unlock();
+            lock.writeLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public void removeDevice(long deviceId, Object key) {
         try {
-            lock.writeLock().lock();
+            lock.writeLock().lock(); // &line[Read_Write_Lock]
             var references = deviceReferences.computeIfAbsent(deviceId, k -> new HashSet<>());
             references.remove(key);
             if (references.isEmpty()) {
@@ -186,21 +186,22 @@ public class CacheManager implements BroadcastInterface {
             }
             LOGGER.debug("Cache remove device {} references {} key {}", deviceId, references.size(), key);
         } finally {
-            lock.writeLock().unlock();
+            lock.writeLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
     public void updatePosition(Position position) {
         try {
-            lock.writeLock().lock();
+            lock.writeLock().lock(); // &line[Read_Write_Lock]
             if (deviceReferences.containsKey(position.getDeviceId())) {
                 devicePositions.put(position.getDeviceId(), position);
             }
         } finally {
-            lock.writeLock().unlock();
+            lock.writeLock().unlock(); // &line[Read_Write_Lock]
         }
     }
 
+    // &begin[Invalidate_Object]
     @Override
     public <T extends BaseModel> void invalidateObject(
             boolean local, Class<T> clazz, long id, ObjectOperation operation) throws Exception {
@@ -245,10 +246,10 @@ public class CacheManager implements BroadcastInterface {
             long afterCalendarId = ((Schedulable) after).getCalendarId();
             if (beforeCalendarId != afterCalendarId) {
                 if (beforeCalendarId > 0) {
-                    invalidatePermission(clazz, id, Calendar.class, beforeCalendarId, false);
+                    invalidatePermission(clazz, id, Calendar.class, beforeCalendarId, false); // &line[Permission_Invalidation]
                 }
                 if (afterCalendarId > 0) {
-                    invalidatePermission(clazz, id, Calendar.class, afterCalendarId, true);
+                    invalidatePermission(clazz, id, Calendar.class, afterCalendarId, true); // &line[Permission_Invalidation]
                 }
             }
             // TODO handle notification always change
@@ -256,7 +257,9 @@ public class CacheManager implements BroadcastInterface {
 
         graph.updateObject(after);
     }
+    // &end[Invalidate_Object]
 
+    // &begin[Permission_Invalidation]
     @Override
     public <T1 extends BaseModel, T2 extends BaseModel> void invalidatePermission(
             boolean local, Class<T1> clazz1, long id1, Class<T2> clazz2, long id2, boolean link) throws Exception {
@@ -298,7 +301,7 @@ public class CacheManager implements BroadcastInterface {
 
     private void initializeCache(BaseModel object) throws Exception {
         if (object instanceof User) {
-            for (Permission permission : storage.getPermissions(User.class, Notification.class)) { // &line[getPermissions]
+            for (Permission permission : storage.getPermissions(User.class, Notification.class)) {
                 if (permission.getOwnerId() == object.getId()) {
                     invalidatePermission(
                             permission.getOwnerClass(), permission.getOwnerId(),
@@ -312,7 +315,7 @@ public class CacheManager implements BroadcastInterface {
                     invalidatePermission(object.getClass(), object.getId(), Group.class, groupId, true);
                 }
 
-                for (Permission permission : storage.getPermissions(User.class, object.getClass())) { // &line[getPermissions]
+                for (Permission permission : storage.getPermissions(User.class, object.getClass())) {
                     if (permission.getPropertyId() == object.getId()) {
                         invalidatePermission(
                                 object.getClass(), object.getId(), User.class, permission.getOwnerId(), true);
@@ -320,7 +323,7 @@ public class CacheManager implements BroadcastInterface {
                 }
 
                 for (Class<? extends BaseModel> clazz : GROUPED_CLASSES) {
-                    for (Permission permission : storage.getPermissions(object.getClass(), clazz)) { // &line[getPermissions]
+                    for (Permission permission : storage.getPermissions(object.getClass(), clazz)) {
                         if (permission.getOwnerId() == object.getId()) {
                             invalidatePermission(
                                     object.getClass(), object.getId(), clazz, permission.getPropertyId(), true);
@@ -337,5 +340,5 @@ public class CacheManager implements BroadcastInterface {
             }
         }
     }
-
+    // &end[Permission_Invalidation]
 }

@@ -44,11 +44,11 @@ public class AplicomProtocolDecoder extends BaseProtocolDecoder {
     private static final long IMEI_BASE_TC65_V20 = 0x1437207000000L;
     private static final long IMEI_BASE_TC65_V28 = 358244010000000L;
     private static final long IMEI_BASE_TC65I_V11 = 0x14143B4000000L;
-    // &begin[validateImei]
+    // &begin[Imei_Validation]
     private static boolean validateImei(long imei) {
-        return Checksum.luhn(imei / 10) == imei % 10; // &line[Checksum_luhn]
+        return Checksum.luhn(imei / 10) == imei % 10; // &line[Checksum]
     }
-    // &end[validateImei]
+    // &end[Imei_Validation]
     private static long imeiFromUnitId(long unitId) {
 
         if (unitId == 0) {

@@ -21,13 +21,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
-// &begin[Hashing_Class]
+// &begin[Sha1_Hashing]
 public final class Hashing {
 
     public static final int ITERATIONS = 1000;
-    public static final int SALT_SIZE = 24;
+    public static final int SALT_SIZE = 24; // &line[Salting] 
     public static final int HASH_SIZE = 24;
-    // &begin[SecretKeyFactory]
+    // &begin[PBKDF2_Key_Generation]
     private static SecretKeyFactory factory;
     static {
         try {
@@ -36,68 +36,68 @@ public final class Hashing {
             e.printStackTrace();
         }
     }
-    // &end[SecretKeyFactory]
+    // &end[PBKDF2_Key_Generation]
 
-    // &begin[HashingResult]
     public static class HashingResult {
 
         private final String hash;
-        private final String salt;
+        private final String salt; // &line[Salting] 
 
         public HashingResult(String hash, String salt) {
             this.hash = hash;
-            this.salt = salt;
+            this.salt = salt; // &line[Salting] 
         }
-        // &begin[getHash]
+
         public String getHash() {
             return hash;
         }
-        // &end[getHash]
-        // &begin[getSalt]
+
+        // &begin[Salting]
         public String getSalt() {
             return salt;
         }
-        // &end[getSalt]
+        // &end[Salting]
     }
-    // &end[HashingResult]
 
     private Hashing() {
     }
 
-    private static byte[] function(char[] password, byte[] salt) {
+    private static byte[] function(char[] password, byte[] salt) { // &line[Salting, Password] 
         try {
-            PBEKeySpec spec = new PBEKeySpec(password, salt, ITERATIONS, HASH_SIZE * Byte.SIZE);
-            return factory.generateSecret(spec).getEncoded();  // &line[KeyGeneration_getEncoded_L]
+            PBEKeySpec spec = new PBEKeySpec(password, salt, ITERATIONS, HASH_SIZE * Byte.SIZE); // &line[Salting] 
+            return factory.generateSecret(spec).getEncoded();  // &line[PBKDF2_Key_Generation]
         } catch (InvalidKeySpecException e) {
             throw new SecurityException(e);
         }
     }
 
     private static final SecureRandom RANDOM = new SecureRandom(); // &line[Secure_Random]
-    // &begin[createHash]
-    public static HashingResult createHash(String password) {
+
+    public static HashingResult createHash(String password) { // &line[Password] 
+        // &begin[Salting]
         byte[] salt = new byte[SALT_SIZE];
         RANDOM.nextBytes(salt);  // &line[Secure_Random]
-        byte[] hash = function(password.toCharArray(), salt);
+        byte[] hash = function(password.toCharArray(), salt); // &line[Password] 
+        // &end[Salting]
         return new HashingResult(
                 DataConverter.printHex(hash),
-                DataConverter.printHex(salt));
+                DataConverter.printHex(salt)); // &line[Salting] 
     }
-    // &end[createHash]
-    // &begin[validatePassword]
-    public static boolean validatePassword(String password, String hashHex, String saltHex) {
+
+    // &begin[Password_Validation]
+    public static boolean validatePassword(String password, String hashHex, String saltHex) { // &line[Salting]
         byte[] hash = DataConverter.parseHex(hashHex);
+        // &begin[Salting]
         byte[] salt = DataConverter.parseHex(saltHex);
         return slowEquals(hash, function(password.toCharArray(), salt));
+        // &end[Salting]
     }
-    // &end[validatePassword]
 
     /**
      * Compares two byte arrays in length-constant time. This comparison method
      * is used so that password hashes cannot be extracted from an on-line
      * system using a timing attack and then attacked off-line.
      */
-    // &begin[slowEquals]
     private static boolean slowEquals(byte[] a, byte[] b) {
         int diff = a.length ^ b.length;
         for (int i = 0; i < a.length && i < b.length; i++) {
@@ -105,6 +105,6 @@ public final class Hashing {
         }
         return diff == 0;
     }
-// &end[slowEquals]
+// &end[Password_Validation]
 }
-// &end[Hashing_Class]
+// &end[Sha1_Hashing]

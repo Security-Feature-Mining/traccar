@@ -39,6 +39,7 @@ public class SimpleObjectResource<T extends BaseModel> extends BaseObjectResourc
         this.sortField = sortField;
     }
 
+    // &begin[Permission_Check]
     @GET
     public Collection<T> get(
             @QueryParam("all") boolean all, @QueryParam("userId") long userId) throws StorageException {
@@ -46,7 +47,7 @@ public class SimpleObjectResource<T extends BaseModel> extends BaseObjectResourc
         var conditions = new LinkedList<Condition>();
 
         if (all) {
-            if (permissionsService.notAdmin(getUserId())) { // &line[notAdmin]
+            if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check]
                 conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
             }
         } else {
@@ -61,5 +62,6 @@ public class SimpleObjectResource<T extends BaseModel> extends BaseObjectResourc
         return storage.getObjects(baseClass, new Request(
                 new Columns.All(), Condition.merge(conditions), sortField != null ? new Order(sortField) : null));
     }
+    // &end[Permission_Check]
 
 }

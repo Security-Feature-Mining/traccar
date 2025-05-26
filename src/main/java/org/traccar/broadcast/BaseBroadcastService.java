@@ -68,33 +68,34 @@ public abstract class BaseBroadcastService implements BroadcastService {
         sendMessage(message);
     }
 
+    // &begin[Invalidate_Object]
     @Override
     public <T extends BaseModel> void invalidateObject(
             boolean local, Class<T> clazz, long id, ObjectOperation operation) {
         BroadcastMessage message = new BroadcastMessage();
         var invalidateObject = new BroadcastMessage.InvalidateObject();
-        invalidateObject.setClazz(Permission.getKey(clazz)); // &line[getKey]
+        invalidateObject.setClazz(Permission.getKey(clazz));
         invalidateObject.setId(id);
         invalidateObject.setOperation(operation);
         message.setInvalidateObject(invalidateObject);
         sendMessage(message);
     }
-
+    // &end[Invalidate_Object]
+    // &begin[Permission_Invalidation]
     @Override
-            // &begin[invalidatePermission]
     public synchronized <T1 extends BaseModel, T2 extends BaseModel> void invalidatePermission(
             boolean local, Class<T1> clazz1, long id1, Class<T2> clazz2, long id2, boolean link) {
         BroadcastMessage message = new BroadcastMessage();
         var invalidatePermission = new BroadcastMessage.InvalidatePermission();
-        invalidatePermission.setClazz1(Permission.getKey(clazz1)); // &line[getKey]
+        invalidatePermission.setClazz1(Permission.getKey(clazz1));
         invalidatePermission.setId1(id1);
-        invalidatePermission.setClazz2(Permission.getKey(clazz2));  // &line[getKey]
+        invalidatePermission.setClazz2(Permission.getKey(clazz2));
         invalidatePermission.setId2(id2);
         invalidatePermission.setLink(link);
         message.setInvalidatePermission(invalidatePermission);
         sendMessage(message);
     }
-    // &end[invalidatePermission]
+    // &end[Permission_Invalidation]
     protected abstract void sendMessage(BroadcastMessage message);
 
     protected void handleMessage(BroadcastMessage message) throws Exception {
@@ -106,6 +107,7 @@ public abstract class BaseBroadcastService implements BroadcastService {
             listeners.forEach(listener -> listener.updateEvent(false, message.getUserId(), message.getEvent()));
         } else if (message.getCommandDeviceId() != null) {
             listeners.forEach(listener -> listener.updateCommand(false, message.getCommandDeviceId()));
+            // &begin[Invalidate_Object]
         } else if (message.getInvalidateObject() != null) {
             var invalidateObject = message.getInvalidateObject();
             for (BroadcastInterface listener : listeners) {
@@ -114,6 +116,8 @@ public abstract class BaseBroadcastService implements BroadcastService {
                         Permission.getKeyClass(invalidateObject.getClazz()), invalidateObject.getId(),
                         invalidateObject.getOperation());
             }
+            // &end[Invalidate_Object]
+            // &begin[Permission_Invalidation]
         } else if (message.getInvalidatePermission() != null) {
             var invalidatePermission = message.getInvalidatePermission();
             for (BroadcastInterface listener : listeners) {
@@ -124,6 +128,7 @@ public abstract class BaseBroadcastService implements BroadcastService {
                         invalidatePermission.getLink());
             }
         }
+        // &end[Permission_Invalidation]
     }
 
 }

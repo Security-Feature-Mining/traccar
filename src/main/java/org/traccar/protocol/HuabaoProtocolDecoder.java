@@ -96,7 +96,7 @@ public class HuabaoProtocolDecoder extends BaseProtocolDecoder {
         }
         buf.writeBytes(data);
         data.release();
-        buf.writeByte(Checksum.xor(buf.nioBuffer(1, buf.readableBytes() - 1))); // &line[Checksum_xor]
+        buf.writeByte(Checksum.xor(buf.nioBuffer(1, buf.readableBytes() - 1))); // &line[Checksum]
         buf.writeByte(delimiter);
         return buf;
     }
@@ -193,7 +193,7 @@ public class HuabaoProtocolDecoder extends BaseProtocolDecoder {
         } else {
             long imei = id.getUnsignedShort(0);
             imei = (imei << 32) + id.getUnsignedInt(2);
-            return String.valueOf(imei) + Checksum.luhn(imei); // &line[Checksum_luhn]
+            return String.valueOf(imei) + Checksum.luhn(imei); // &line[Checksum]
         }
     }
 

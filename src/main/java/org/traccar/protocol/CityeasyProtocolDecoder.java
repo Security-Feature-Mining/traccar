@@ -77,7 +77,7 @@ public class CityeasyProtocolDecoder extends BaseProtocolDecoder {
 
         String imei = ByteBufUtil.hexDump(buf.readSlice(7));
         DeviceSession deviceSession = getDeviceSession(
-                channel, remoteAddress, imei, imei + Checksum.luhn(Long.parseLong(imei))); // &line[Checksum_luhn]
+                channel, remoteAddress, imei, imei + Checksum.luhn(Long.parseLong(imei))); // &line[Checksum]
         if (deviceSession == null) {
             return null;
         }
