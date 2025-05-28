@@ -254,7 +254,7 @@ public class Gt06ProtocolDecoder extends BaseProtocolDecoder {
                 content.release();
             }
             response.writeShort(index);
-            response.writeShort(Checksum.crc16(Checksum.CRC16_X25,
+            response.writeShort(Checksum.crc16(Checksum.CRC16_X25, // &line[Checksum] 
                     response.nioBuffer(2, response.writerIndex() - 2)));
             response.writeByte('\r');
             response.writeByte('\n');

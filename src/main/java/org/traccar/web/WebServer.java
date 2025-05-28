@@ -194,12 +194,15 @@ public class WebServer implements LifecycleObject {
 
         SessionCookieConfig sessionCookieConfig = servletHandler.getServletContext().getSessionCookieConfig();
 
+        // &begin[Session_Timeout]
         int sessionTimeout = config.getInteger(Keys.WEB_SESSION_TIMEOUT);
         if (sessionTimeout > 0) {
             servletHandler.getSessionHandler().setMaxInactiveInterval(sessionTimeout);
             sessionCookieConfig.setMaxAge(sessionTimeout);
         }
+        // &end[Session_Timeout]
 
+        // &begin[Cookie_Same_Site]
         String sameSiteCookie = config.getString(Keys.WEB_SAME_SITE_COOKIE);
         if (sameSiteCookie != null) {
             switch (sameSiteCookie.toLowerCase()) {
@@ -217,8 +220,9 @@ public class WebServer implements LifecycleObject {
                     break;
             }
         }
+        // &end[Cookie_Same_Site]
 
-        sessionCookieConfig.setHttpOnly(true);
+        sessionCookieConfig.setHttpOnly(true); // &line[Cookie_Http_only] 
     }
 
     @Override

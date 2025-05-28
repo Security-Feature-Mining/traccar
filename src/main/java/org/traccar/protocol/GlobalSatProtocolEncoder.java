@@ -41,7 +41,7 @@ public class GlobalSatProtocolEncoder extends StringProtocolEncoder {
         }
 
         if (formattedCommand != null) {
-            return formattedCommand + Checksum.nmea(formattedCommand) + '!';
+            return formattedCommand + Checksum.nmea(formattedCommand) + '!'; // &line[Checksum]
         } else {
             return null;
         }

@@ -103,8 +103,10 @@ public class PositionForwarderWialon implements PositionForwarder {
         if (version.startsWith("2")) {
             payload += ';';
             ByteBuffer payloadBuffer = ByteBuffer.wrap(payload.getBytes(StandardCharsets.US_ASCII));
+            // &begin[Checksum]
             int checksum = Checksum.crc16(Checksum.CRC16_IBM, payloadBuffer);
             message = version + ';' + uniqueId + "#D#" + payload + String.format("%04x", checksum) + "\r\n";
+            // &end[Checksum]
         } else {
             message = uniqueId + "#D#" + payload + "\r\n";
         }

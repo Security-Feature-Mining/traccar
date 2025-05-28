@@ -56,17 +56,17 @@ public class ExtendedObjectResource<T extends BaseModel> extends BaseObjectResou
                 conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
             } else {
                 permissionsService.checkUser(getUserId(), userId);      // &line[Permission_Check]
-                conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[excludeGroups]
+                conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[Permission_Assignment]
             }
         }
 
         if (groupId > 0) {
             permissionsService.checkPermission(Group.class, getUserId(), groupId); // &line[Permission_Check]
-            conditions.add(new Condition.Permission(Group.class, groupId, baseClass).excludeGroups()); // &line[excludeGroups]
+            conditions.add(new Condition.Permission(Group.class, groupId, baseClass).excludeGroups()); // &line[Permission_Assignment]
         }
         if (deviceId > 0) {
             permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
-            conditions.add(new Condition.Permission(Device.class, deviceId, baseClass).excludeGroups()); // &line[excludeGroups]
+            conditions.add(new Condition.Permission(Device.class, deviceId, baseClass).excludeGroups()); // &line[Permission_Assignment]
         }
 
         return storage.getObjects(baseClass, new Request(

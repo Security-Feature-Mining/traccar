@@ -267,8 +267,10 @@ public class FleetGuideProtocolDecoder extends BaseProtocolDecoder {
                 int mask = (1 << (index + 1)) - 1;
                 response.writeShortLE(mask);
             }
-            response.writeShortLE(Checksum.crc16( // &line[Checksum]
+            // &begin[Checksum]
+            response.writeShortLE(Checksum.crc16(
                     Checksum.CRC16_CCITT_FALSE, response.nioBuffer(1, response.writerIndex() - 1)));
+            // &end[Checksum]
 
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }

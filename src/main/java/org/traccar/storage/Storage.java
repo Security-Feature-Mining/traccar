@@ -31,21 +31,21 @@ public abstract class Storage {
 
     public abstract void removeObject(Class<?> clazz, Request request) throws StorageException;
 
-    public abstract List<Permission> getPermissions( // &line[getPermissions]
+    public abstract List<Permission> getPermissions( // &line[Permission_Management]
             Class<? extends BaseModel> ownerClass, long ownerId,
             Class<? extends BaseModel> propertyClass, long propertyId) throws StorageException;
 
-    public abstract void addPermission(Permission permission) throws StorageException; // &line[addPermission]
+    public abstract void addPermission(Permission permission) throws StorageException; // &line[Permission_Assignment]
 
-    public abstract void removePermission(Permission permission) throws StorageException; // &line[removePermission]
+    public abstract void removePermission(Permission permission) throws StorageException; // &line[Permission_Invalidation]
 
-// &begin[getPermissions]
+// &begin[Permission_Management]
     public List<Permission> getPermissions(
             Class<? extends BaseModel> ownerClass,
             Class<? extends BaseModel> propertyClass) throws StorageException {
         return getPermissions(ownerClass, 0, propertyClass, 0);
     }
-    // &end[getPermissions]
+    // &end[Permission_Management]
 
     public <T> T getObject(Class<T> clazz, Request request) throws StorageException {
         var objects = getObjects(clazz, request);

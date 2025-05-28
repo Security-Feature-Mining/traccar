@@ -28,10 +28,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-// &begin[TokenManager]
+// &begin[Token_Management]
 public class TokenManager {
 
-    private static final int DEFAULT_EXPIRATION_DAYS = 7; // &line[Session_Timeout]
+    private static final int DEFAULT_EXPIRATION_DAYS = 7; // &line[Token_Expiration]
 
     private final ObjectMapper objectMapper;
     private final CryptoManager cryptoManager;
@@ -41,20 +41,20 @@ public class TokenManager {
         @JsonProperty("u")
         private long userId;
         // &end[User]
-        // &begin[Session_Timeout]
+        // &begin[Token_Expiration]
         @JsonProperty("e")
         private Date expiration;
-        // &end[Session_Timeout]
+        // &end[Token_Expiration]
         // &begin[User]
         public long getUserId() {
             return userId;
         }
         // &end[User]
-        // &begin[Session_Timeout]
+        // &begin[Token_Expiration]
         public Date getExpiration() {
             return expiration;
         }
-        // &end[Session_Timeout]
+        // &end[Token_Expiration]
     }
 
     @Inject
@@ -62,38 +62,38 @@ public class TokenManager {
         this.objectMapper = objectMapper;
         this.cryptoManager = cryptoManager;
     }
-    // &begin[generateToken]
+    // &begin[Token_Generation]
     public String generateToken(long userId) throws IOException, GeneralSecurityException, StorageException {
-        return generateToken(userId, null); // &line[User] 
+        return generateToken(userId, null);
     }
 
     public String generateToken(
-            long userId, Date expiration) throws IOException, GeneralSecurityException, StorageException { // &line[User] 
+            long userId, Date expiration) throws IOException, GeneralSecurityException, StorageException {
         TokenData data = new TokenData();
-        data.userId = userId; // &line[User]
-        // &begin[Session_Timeout]
+        data.userId = userId;
+        // &begin[Token_Expiration]
         if (expiration != null) {
             data.expiration = expiration;
         } else {
             data.expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(DEFAULT_EXPIRATION_DAYS));
         }
-        // &end[Session_Timeout]
+        // &end[Token_Expiration]
         byte[] encoded = objectMapper.writeValueAsBytes(data);
         return Base64.encodeBase64URLSafeString(cryptoManager.sign(encoded));
     }
-    // &end[generateToken]
+    // &end[Token_Generation]
 
-// &begin[verifyToken]
+// &begin[Token_Validation]
     public TokenData verifyToken(String token) throws IOException, GeneralSecurityException, StorageException {
-        byte[] encoded = cryptoManager.verify(Base64.decodeBase64(token)); // &line[verify]
+        byte[] encoded = cryptoManager.verify(Base64.decodeBase64(token));
         TokenData data = objectMapper.readValue(encoded, TokenData.class);
-        // &begin[Session_Timeout]
+        // &begin[Token_Expiration]
         if (data.expiration.before(new Date())) {
             throw new SecurityException("Token has expired");
         }
-        // &end[Session_Timeout]
+        // &end[Token_Expiration]
         return data;
     }
-// &end[verifyToken]
+// &end[Token_Validation]
 }
-// &begin[TokenManager]
+// &begin[Token_Management]

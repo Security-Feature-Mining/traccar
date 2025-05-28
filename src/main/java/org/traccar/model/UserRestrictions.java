@@ -15,10 +15,16 @@
  */
 package org.traccar.model;
 
+// &begin[Permission_Definition]
 public interface UserRestrictions {
     boolean getReadonly();
+
     boolean getDeviceReadonly();
+
     boolean getLimitCommands();
+
     boolean getDisableReports();
+
     boolean getFixedEmail();
 }
+// &end[Permission_Definition]

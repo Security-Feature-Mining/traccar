@@ -36,10 +36,12 @@ public final class PositionUtil {
     private PositionUtil() {
     }
 
+    // &begin[DISCUSS]
     public static boolean isLatest(CacheManager cacheManager, Position position) {
         Position lastPosition = cacheManager.getPosition(position.getDeviceId());
         return lastPosition == null || position.getFixTime().compareTo(lastPosition.getFixTime()) >= 0;
     }
+    // &end[DISCUSS]
 
     public static double calculateDistance(Position first, Position last, boolean useOdometer) {
         double distance;

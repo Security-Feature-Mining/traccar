@@ -58,7 +58,7 @@ public class MaintenanceEventHandler extends BaseEventHandler {
 
     private double getValue(Position position, String type) {
         return switch (type) {
-            case "serverTime" -> position.getServerTime().getTime();
+            case "serverTime" -> position.getServerTime().getTime(); // &line[Server_Time] 
             case "deviceTime" -> position.getDeviceTime().getTime();
             case "fixTime" -> position.getFixTime().getTime();
             default -> position.getDouble(type);

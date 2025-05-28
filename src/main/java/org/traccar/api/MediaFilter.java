@@ -63,11 +63,11 @@ public class MediaFilter implements Filter {
         // &begin[User_Based_Request_Authorization]
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         try {
-            HttpSession session = ((HttpServletRequest) request).getSession(false); // &line[Session]
+            HttpSession session = ((HttpServletRequest) request).getSession(false); // &line[User_Session]
             Long userId = null; // &line[User]
-            if (session != null) { // &line[Session]
+            if (session != null) { // &line[User_Session]
                 // &begin[User]
-                userId = (Long) session.getAttribute(SessionHelper.USER_ID_KEY); // &line[Session]
+                userId = (Long) session.getAttribute(SessionHelper.USER_ID_KEY); // &line[User_Session]
                 if (userId != null) {
                     statisticsManager.registerRequest(userId); // &line[Access_Logging] 
                 }
@@ -84,7 +84,7 @@ public class MediaFilter implements Filter {
                 Device device = storage.getObject(Device.class, new Request(
                         new Columns.All(), new Condition.Equals("uniqueId", parts[1])));
                 if (device != null) {
-                    permissionsServiceProvider.get().checkPermission(Device.class, userId, device.getId()); // &line[Permission_Check, User]
+                    permissionsServiceProvider.get().checkPermission(Device.class, userId, device.getId()); // &line[Permission_Check]
                     // &end[User_Based_Request_Authorization]
                     chain.doFilter(request, response);
                     // &begin[User_Based_Request_Authorization]

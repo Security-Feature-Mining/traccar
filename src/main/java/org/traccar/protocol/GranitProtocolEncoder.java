@@ -32,7 +32,7 @@ public class GranitProtocolEncoder extends BaseProtocolEncoder {
     private ByteBuf encodeCommand(String commandString) {
         ByteBuf buffer = Unpooled.buffer();
         buffer.writeBytes(commandString.getBytes(StandardCharsets.US_ASCII));
-        GranitProtocolDecoder.appendChecksum(buffer, commandString.length());
+        GranitProtocolDecoder.appendChecksum(buffer, commandString.length()); // &line[Checksum]
         return buffer;
     }
 

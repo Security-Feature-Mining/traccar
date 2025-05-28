@@ -31,6 +31,7 @@ import org.traccar.model.User;
 
 import java.util.Hashtable;
 
+// &begin[Ldap_Authentication]
 public class LdapProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapProvider.class);
@@ -60,14 +61,14 @@ public class LdapProvider {
             adminFilter = config.getString(Keys.LDAP_ADMIN_FILTER);
         } else {
             String adminGroup = config.getString(Keys.LDAP_ADMIN_GROUP);
-            if (adminGroup != null) {
+            if (adminGroup != null) { // &line[Role_Check] 
                 adminFilter = "(&(" + idAttribute + "=:login)(memberOf=" + adminGroup + "))";
             } else {
                 adminFilter = null;
             }
         }
         serviceUser = config.getString(Keys.LDAP_USER);
-        servicePassword = config.getString(Keys.LDAP_PASSWORD);
+        servicePassword = config.getString(Keys.LDAP_PASSWORD); // &line[DISCUSS] 
     }
 
     private InitialDirContext auth(String accountName, String password) throws NamingException {
@@ -82,6 +83,7 @@ public class LdapProvider {
         return new InitialDirContext(env);
     }
 
+    // &begin[Role_Check]
     private boolean isAdmin(String accountName) {
         if (this.adminFilter != null) {
             try {
@@ -104,6 +106,7 @@ public class LdapProvider {
         }
         return false;
     }
+    // &end[Role_Check]
 
     public InitialDirContext initContext() throws NamingException {
         return auth(serviceUser, servicePassword);
@@ -201,3 +204,4 @@ public class LdapProvider {
     }
 
 }
+// &end[Ldap_Authentication]

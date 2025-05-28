@@ -234,12 +234,14 @@ public class CacheManager implements BroadcastInterface {
             long beforeGroupId = ((GroupedModel) before).getGroupId();
             long afterGroupId = ((GroupedModel) after).getGroupId();
             if (beforeGroupId != afterGroupId) {
+                // &begin[Permission_Invalidation]
                 if (beforeGroupId > 0) {
                     invalidatePermission(clazz, id, Group.class, beforeGroupId, false);
                 }
                 if (afterGroupId > 0) {
                     invalidatePermission(clazz, id, Group.class, afterGroupId, true);
                 }
+                // &end[Permission_Invalidation]
             }
         } else if (after instanceof Schedulable) {
             long beforeCalendarId = ((Schedulable) before).getCalendarId();

@@ -23,9 +23,11 @@ public final class NetworkUtil {
     private NetworkUtil() {
     }
 
+    // &begin[Network_Session]
     public static String session(Channel channel) {
         char transport = channel instanceof DatagramChannel ? 'U' : 'T';
         return transport + channel.id().asShortText();
     }
+    // &end[Network_Session]
 
 }

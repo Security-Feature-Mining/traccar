@@ -132,7 +132,7 @@ public class NotificatorFirebase extends Notificator {
                     storage.updateObject(user, new Request(
                             new Columns.Include("attributes"),
                             new Condition.Equals("id", user.getId())));
-                    cacheManager.invalidateObject(true, User.class, user.getId(), ObjectOperation.UPDATE);
+                    cacheManager.invalidateObject(true, User.class, user.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object]
                 }
             } catch (Exception e) {
                 LOGGER.warn("Firebase error", e);

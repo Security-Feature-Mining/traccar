@@ -146,9 +146,9 @@ public interface Condition {
         private final long ownerId;
         private final Class<?> propertyClass;
         private final long propertyId;
+        // &begin[Permission_Definition]
         private final boolean excludeGroups;
 
-        // &end[Permission_Class]
         private Permission(
                 Class<?> ownerClass, long ownerId, Class<?> propertyClass, long propertyId, boolean excludeGroups) {
             this.ownerClass = ownerClass;
@@ -165,13 +165,11 @@ public interface Condition {
         public Permission(Class<?> ownerClass, Class<?> propertyClass, long propertyId) {
             this(ownerClass, 0, propertyClass, propertyId, false);
         }
-        // &end[Permission_Class]
 
-// &begin[excludeGroups]
         public Permission excludeGroups() {
             return new Permission(this.ownerClass, this.ownerId, this.propertyClass, this.propertyId, true);
         }
-        // &end[excludeGroups]
+        // &end[Permission_Definition]
 
         public Class<?> getOwnerClass() {
             return ownerClass;
@@ -188,12 +186,13 @@ public interface Condition {
         public long getPropertyId() {
             return propertyId;
         }
-
+        // &begin[Permission_Definition]
         public boolean getIncludeGroups() {
             boolean ownerGroupModel = GroupedModel.class.isAssignableFrom(ownerClass);
             boolean propertyGroupModel = GroupedModel.class.isAssignableFrom(propertyClass);
             return (ownerGroupModel || propertyGroupModel) && !excludeGroups;
         }
+        // &end[Permission_Definition]
     }
 
     class LatestPositions implements Condition {

@@ -111,7 +111,7 @@ public class EgtsProtocolDecoder extends BaseProtocolDecoder {
             response.writeByte(Checksum.crc8(Checksum.CRC8_EGTS, response.nioBuffer())); // &line[Checksum]
             response.writeBytes(record);
             record.release();
-            response.writeShortLE(recordChecksum);
+            response.writeShortLE(recordChecksum); // &line[Checksum]
 
             channel.writeAndFlush(new NetworkMessage(response, channel.remoteAddress()));
 

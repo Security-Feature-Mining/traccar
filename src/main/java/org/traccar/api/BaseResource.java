@@ -26,13 +26,13 @@ import jakarta.ws.rs.core.SecurityContext;
 public class BaseResource {
 
     @Context
-    private SecurityContext securityContext;  // &line[SecurityContext]
+    private SecurityContext securityContext;  // &line[Authentication_Scheme]
 
     @Inject
     protected Storage storage;
 
     @Inject
-    protected PermissionsService permissionsService;
+    protected PermissionsService permissionsService; // &line[Permission_Management]
 
     // &begin[User]
     protected long getUserId() {

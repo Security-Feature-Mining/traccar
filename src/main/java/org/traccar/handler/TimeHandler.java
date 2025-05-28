@@ -26,9 +26,10 @@ import java.util.Set;
 
 public class TimeHandler extends BasePositionHandler {
 
-    private final boolean useServerTime;
+    private final boolean useServerTime; // &line[Server_Time] 
     private final Set<String> protocols;
 
+    // &begin[Server_Time]
     @Inject
     public TimeHandler(Config config) {
         useServerTime = config.getString(Keys.TIME_OVERRIDE).equalsIgnoreCase("serverTime");
@@ -39,14 +40,17 @@ public class TimeHandler extends BasePositionHandler {
             protocols = null;
         }
     }
+    // &end[Server_Time]
 
     @Override
     public void onPosition(Position position, Callback callback) {
 
         if (protocols == null || protocols.contains(position.getProtocol())) {
+            // &begin[Server_Time]
             if (useServerTime) {
                 position.setDeviceTime(position.getServerTime());
                 position.setFixTime(position.getServerTime());
+                // &end[Server_Time]
             } else {
                 position.setFixTime(position.getDeviceTime());
             }

@@ -49,7 +49,6 @@ import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.LinkedList;
 
-// &begin[User]
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -99,7 +98,7 @@ public class UserResource extends BaseObjectResource<User> {
                             new Columns.All(),
                             new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups()))  // &line[Permission_Check]
                             .size();
-                    if (userCount >= userLimit) { // &line[DISCUSS]
+                    if (userCount >= userLimit) {
                         throw new SecurityException("Manager user limit reached");
                     }
                 }
@@ -121,14 +120,14 @@ public class UserResource extends BaseObjectResource<User> {
 
         entity.setId(storage.addObject(entity, new Request(new Columns.Exclude("id"))));
         storage.updateObject(entity, new Request(
-                new Columns.Include("hashedPassword", "salt"), // &line[Salting, Password]
+                new Columns.Include("hashedPassword", "salt"), // &line[Salting]
                 new Condition.Equals("id", entity.getId())));
 
-        LogAction.create(getUserId(), entity); // &line[User_Creation_Logging]
+        LogAction.create(getUserId(), entity); // &line[Action_Logging]
 
         if (currentUser != null && currentUser.getUserLimit() != 0) {
             storage.addPermission(new Permission(User.class, getUserId(), ManagedUser.class, entity.getId())); // &line[Permission_Assignment]
-            LogAction.link(getUserId(), User.class, getUserId(), ManagedUser.class, entity.getId()); // &line[Permission_Logging]
+            LogAction.link(getUserId(), User.class, getUserId(), ManagedUser.class, entity.getId()); // &line[Permission_Change_Logging]
         }
         return Response.ok(entity).build();
     }
@@ -158,4 +157,3 @@ public class UserResource extends BaseObjectResource<User> {
     // &end[TOTP_Key_Generation]
 
 }
-// &end[User]

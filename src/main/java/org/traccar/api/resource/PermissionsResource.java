@@ -104,8 +104,10 @@ public class PermissionsResource extends BaseResource {
     @DELETE
     @Path("bulk")
     public Response remove(List<LinkedHashMap<String, Long>> entities) throws Exception {
-        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly);  // &line[Permission_Check]
-        checkPermissionTypes(entities); // &line[Permission_Type_Validation]
+        // &begin[Permission_Check]
+        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly);
+        checkPermissionTypes(entities);
+        // &end[Permission_Check]
         for (LinkedHashMap<String, Long> entity : entities) {
             Permission permission = new Permission(entity);
             checkPermission(permission); // &line[Permission_Check]
@@ -115,11 +117,11 @@ public class PermissionsResource extends BaseResource {
                     permission.getOwnerClass(), permission.getOwnerId(),
                     permission.getPropertyClass(), permission.getPropertyId(),
                     false);
-            // &begin[Permission_Logging]
+            // &begin[Permission_Change_Logging]
             LogAction.unlink(getUserId(),
                     permission.getOwnerClass(), permission.getOwnerId(),
                     permission.getPropertyClass(), permission.getPropertyId());
-            // &end[Permission_Logging]
+            // &end[Permission_Change_Logging]
         }
         return Response.noContent().build();
     }

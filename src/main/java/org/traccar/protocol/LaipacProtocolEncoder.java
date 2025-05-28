@@ -29,7 +29,7 @@ public class LaipacProtocolEncoder extends StringProtocolEncoder {
     @Override
     protected String formatCommand(Command command, String format, String... keys) {
         String sentence = super.formatCommand(command, "$" + format, keys);
-        sentence += Checksum.nmea(sentence.substring(1)) + "\r\n";
+        sentence += Checksum.nmea(sentence.substring(1)) + "\r\n"; // &line[Checksum]
         return sentence;
     }
 

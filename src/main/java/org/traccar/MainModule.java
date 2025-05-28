@@ -133,9 +133,9 @@ public class MainModule extends AbstractModule {
     @Provides
     public static Storage provideStorage(Injector injector, Config config) {
         if (config.getBoolean(Keys.DATABASE_MEMORY)) {
-            return injector.getInstance(MemoryStorage.class);
+            return injector.getInstance(MemoryStorage.class); // &line[Memory_Storage]  
         } else {
-            return injector.getInstance(DatabaseStorage.class);
+            return injector.getInstance(DatabaseStorage.class); // &line[Database_Storage]  
         }
     }
 
@@ -175,6 +175,7 @@ public class MainModule extends AbstractModule {
         }
     }
 
+    // &begin[Ldap_Authentication]
     @Singleton
     @Provides
     public static LdapProvider provideLdapProvider(Config config) {
@@ -183,17 +184,20 @@ public class MainModule extends AbstractModule {
         }
         return null;
     }
+    // &end[Ldap_Authentication]
 
+    // &begin[OpenID_Authentication]
     @Singleton
     @Provides
     public static OpenIdProvider provideOpenIDProvider(
-        Config config, LoginService loginService, ObjectMapper objectMapper
-        ) throws InterruptedException, IOException, URISyntaxException {
+            Config config, LoginService loginService, ObjectMapper objectMapper
+    ) throws InterruptedException, IOException, URISyntaxException {
         if (config.hasKey(Keys.OPENID_CLIENT_ID)) {
             return new OpenIdProvider(config, loginService, HttpClient.newHttpClient(), objectMapper);
         }
         return null;
     }
+    // &end[OpenID_Authentication]
 
     @Provides
     public static WebServer provideWebServer(Injector injector, Config config) {

@@ -60,7 +60,7 @@ public class DevicesReportProvider {
 
         return storage.getObjects(Device.class, new Request(
                 new Columns.All(),
-                new Condition.Permission(User.class, userId, Device.class))).stream()
+                        new Condition.Permission(User.class, userId, Device.class))).stream() // &line[Permission_Check]
                 .map(device -> new DeviceReportItem(device, positions.get(device.getId())))
                 .toList();
     }

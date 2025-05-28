@@ -60,8 +60,10 @@ public class PasswordResource extends BaseResource {
     public Response reset(@FormParam("email") String email)
             throws StorageException, MessagingException, GeneralSecurityException, IOException {
 
+        // &begin[Secure_Storage]
         User user = storage.getObject(User.class, new Request(
                 new Columns.All(), new Condition.Equals("email", email)));
+        // &end[Secure_Storage]
         if (user != null) {
             var velocityContext = textTemplateFormatter.prepareContext(permissionsService.getServer(), user);
             var fullMessage = textTemplateFormatter.formatMessage(velocityContext, "passwordReset", "full");
@@ -80,13 +82,17 @@ public class PasswordResource extends BaseResource {
             throws StorageException, GeneralSecurityException, IOException {
 
         long userId = tokenManager.verifyToken(token).getUserId(); // &line[Token_Validation]
+        // &begin[Secure_Storage]
         User user = storage.getObject(User.class, new Request(
                 new Columns.All(), new Condition.Equals("id", userId)));
+        // &end[Secure_Storage]
         if (user != null) {
             user.setPassword(password);
+            // &begin[Secure_Storage]
             storage.updateObject(user, new Request(
                     new Columns.Include("hashedPassword", "salt"), // &line[Salting]
                     new Condition.Equals("id", userId)));
+            // &end[Secure_Storage]
             return Response.ok().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();

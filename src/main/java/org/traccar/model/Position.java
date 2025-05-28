@@ -168,6 +168,7 @@ public class Position extends Message {
         this.protocol = protocol;
     }
 
+    // &begin[Server_Time]
     private Date serverTime = new Date();
 
     public Date getServerTime() {
@@ -177,6 +178,7 @@ public class Position extends Message {
     public void setServerTime(Date serverTime) {
         this.serverTime = serverTime;
     }
+    // &end[Server_Time]
 
     private Date deviceTime;
 
@@ -204,6 +206,7 @@ public class Position extends Message {
         setFixTime(time);
     }
 
+    // &begin[DISCUSS]
     private boolean outdated;
 
     @QueryIgnore
@@ -225,6 +228,7 @@ public class Position extends Message {
     public void setValid(boolean valid) {
         this.valid = valid;
     }
+    // &end[DISCUSS]
 
     private double latitude;
 

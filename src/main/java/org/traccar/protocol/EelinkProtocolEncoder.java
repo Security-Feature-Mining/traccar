@@ -34,6 +34,7 @@ public class EelinkProtocolEncoder extends BaseProtocolEncoder {
         this.connectionless = connectionless;
     }
 
+    // &begin[Checksum]
     public static int checksum(ByteBuffer buf) {
         int sum = 0;
         while (buf.hasRemaining()) {
@@ -41,6 +42,7 @@ public class EelinkProtocolEncoder extends BaseProtocolEncoder {
         }
         return sum;
     }
+    // &end[Checksum]
 
     public static ByteBuf encodeContent(
             boolean connectionless, String uniqueId, int type, int index, ByteBuf content) {
@@ -67,7 +69,7 @@ public class EelinkProtocolEncoder extends BaseProtocolEncoder {
             result.writeByte('E');
             result.writeByte('L');
             result.writeShort(2 + buf.readableBytes()); // length
-            result.writeShort(checksum(buf.nioBuffer()));
+            result.writeShort(checksum(buf.nioBuffer())); // &line[Checksum] 
         }
 
         result.writeBytes(buf);

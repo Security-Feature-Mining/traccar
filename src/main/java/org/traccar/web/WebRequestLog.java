@@ -25,6 +25,7 @@ import org.traccar.helper.SessionHelper;
 import java.util.Locale;
 import java.util.TimeZone;
 
+// &begin[Access_Logging]
 public class WebRequestLog extends ContainerLifeCycle implements RequestLog {
 
     private final Writer writer;
@@ -55,3 +56,4 @@ public class WebRequestLog extends ContainerLifeCycle implements RequestLog {
     }
 
 }
+// &end[Access_Logging]

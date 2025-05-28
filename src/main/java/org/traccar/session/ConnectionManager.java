@@ -57,6 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+// &begin[DISCUSS]
 @Singleton
 public class ConnectionManager implements BroadcastInterface {
 
@@ -365,9 +366,13 @@ public class ConnectionManager implements BroadcastInterface {
 
     public interface UpdateListener {
         void onKeepalive();
+
         void onUpdateDevice(Device device);
+
         void onUpdatePosition(Position position);
+
         void onUpdateEvent(Event event);
+
         void onUpdateLog(LogRecord record);
     }
 
@@ -399,3 +404,4 @@ public class ConnectionManager implements BroadcastInterface {
     }
 
 }
+// &end[DISCUSS]

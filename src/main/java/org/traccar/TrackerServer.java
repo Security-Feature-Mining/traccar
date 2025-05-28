@@ -50,10 +50,12 @@ public abstract class TrackerServer implements TrackerConnector {
         return datagram;
     }
 
+    // &begin[Secure_Communication]
     @Override
     public boolean isSecure() {
         return secure;
     }
+    // &end[Secure_Communication]
 
     public TrackerServer(Config config, String protocol, boolean datagram) {
         secure = config.getBoolean(Keys.PROTOCOL_SSL.withPrefix(protocol));
@@ -61,17 +63,19 @@ public abstract class TrackerServer implements TrackerConnector {
         port = config.getInteger(Keys.PROTOCOL_PORT.withPrefix(protocol));
 
         BasePipelineFactory pipelineFactory = new BasePipelineFactory(this, config, protocol) {
+            // &begin[Secure_Communication]
             @Override
             protected void addTransportHandlers(PipelineBuilder pipeline) {
                 try {
                     if (isSecure()) {
-                        SSLEngine engine = SSLContext.getDefault().createSSLEngine(); // &line[createSSLEngine]
+                        SSLEngine engine = SSLContext.getDefault().createSSLEngine();
                         pipeline.addLast(new SslHandler(engine));
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
+            // &end[Secure_Communication]
 
             @Override
             protected void addProtocolHandlers(PipelineBuilder pipeline) {

@@ -43,6 +43,7 @@ public class HttpSmsClient implements SmsManager {
     public HttpSmsClient(Config config, Client client) {
         this.client = client;
         url = config.getString(Keys.SMS_HTTP_URL);
+        // &begin[Authorization_Scheme]
         authorizationHeader = config.getString(Keys.SMS_HTTP_AUTHORIZATION_HEADER);
         if (config.hasKey(Keys.SMS_HTTP_AUTHORIZATION)) {
             authorization = config.getString(Keys.SMS_HTTP_AUTHORIZATION);
@@ -56,6 +57,7 @@ public class HttpSmsClient implements SmsManager {
                 authorization = null;
             }
         }
+        // &end[Authorization_Scheme]
         template = config.getString(Keys.SMS_HTTP_TEMPLATE).trim();
         if (template.charAt(0) == '<') {
             mediaType = MediaType.APPLICATION_XML_TYPE;

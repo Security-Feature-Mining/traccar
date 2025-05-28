@@ -147,7 +147,7 @@ public class PositionForwarderUrl implements PositionForwarder {
             f.format("%1$td%1$tm%1$ty,,", calendar);
         }
 
-        s.append(Checksum.nmea(s.substring(1)));
+        s.append(Checksum.nmea(s.substring(1))); // &line[Checksum]  
 
         return s.toString();
     }

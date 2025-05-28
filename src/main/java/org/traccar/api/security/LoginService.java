@@ -61,7 +61,6 @@ public class LoginService {
         forceOpenId = config.getBoolean(Keys.OPENID_FORCE); // &line[OpenID_Authentication]
     }
 
-    // &begin[login_credentials]
     public LoginResult login(
             String scheme, String credentials) throws StorageException, GeneralSecurityException, IOException {
         switch (scheme.toLowerCase()) {
@@ -79,14 +78,13 @@ public class LoginService {
                 throw new SecurityException("Unsupported authorization scheme");
         }
     }
-    // &end[login_credentials]
 
-    // &begin[login_token]
+    // &begin[Token_Authentication]
     public LoginResult login(String token) throws StorageException, GeneralSecurityException, IOException {
         if (serviceAccountToken != null && serviceAccountToken.equals(token)) {
             return new LoginResult(new ServiceAccountUser());
         }
-        TokenManager.TokenData tokenData = tokenManager.verifyToken(token); // &line[verifyToken]
+        TokenManager.TokenData tokenData = tokenManager.verifyToken(token); // &line[Token_Validation]
         User user = storage.getObject(User.class, new Request(
                 new Columns.All(), new Condition.Equals("id", tokenData.getUserId())));
         if (user != null) {
@@ -94,7 +92,7 @@ public class LoginService {
         }
         return new LoginResult(user, tokenData.getExpiration());
     }
-    // &end[login_token]
+    // &end[Token_Authentication]
 
     public LoginResult login(String email, String password, Integer code) throws StorageException { // &line[Password] 
         // &begin[OpenID_Authentication]
@@ -148,15 +146,14 @@ public class LoginService {
         return new LoginResult(user);
     }
     // &end[Admin_Login]
-// &begin[checkUserEnabled]
+// &begin[Permission_Check]
     private void checkUserEnabled(User user) throws SecurityException {
         if (user == null) {
             throw new SecurityException("Unknown account");
         }
         user.checkDisabled();
     }
-    // &end[checkUserEnabled]
-
+    // &end[Permission_Check]
     // &begin[TOTP_Authentication]
     private void checkUserCode(User user, Integer code) throws SecurityException {
         String key = user.getTotpKey();
@@ -165,12 +162,11 @@ public class LoginService {
                 throw new CodeRequiredException();
             }
             GoogleAuthenticator authenticator = new GoogleAuthenticator();
-            if (!authenticator.authorize(key, code)) { // &line[Permission_Check, DISCUSS]
+            if (!authenticator.authorize(key, code)) {
                 throw new SecurityException("User authorization failed");
             }
         }
     }
     // &end[TOTP_Authentication]
-
 }
 // &end[User_Login]

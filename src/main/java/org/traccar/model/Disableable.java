@@ -17,6 +17,7 @@ package org.traccar.model;
 
 import java.util.Date;
 
+// &begin[User_Check]
 public interface Disableable {
 
     boolean getDisabled();
@@ -37,3 +38,4 @@ public interface Disableable {
     }
 
 }
+// &end[User_Check]

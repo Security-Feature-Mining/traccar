@@ -114,12 +114,12 @@ public class NotificationResource extends ExtendedObjectResource<Notification> {
     public Response sendMessage(
             @PathParam("notificator") String notificator, @QueryParam("userId") List<Long> userIds,
             NotificationMessage message) throws MessageException, StorageException {
-        permissionsService.checkManager(getUserId());
+        permissionsService.checkManager(getUserId()); // &line[Role_Check]
         List<User> users;
         if (userIds.isEmpty()) {
             if (permissionsService.notAdmin(getUserId())) {
                 users = storage.getObjects(User.class, new Request(new Columns.All(),
-                        new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups())); // &line[excludeGroups]
+                        new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups())); // &line[Permission_Check]
             } else {
                 users = storage.getObjects(User.class, new Request(new Columns.All()));
             }
@@ -128,9 +128,9 @@ public class NotificationResource extends ExtendedObjectResource<Notification> {
             for (long userId : userIds) {
                 var conditions = new LinkedList<Condition>();
                 conditions.add(new Condition.Equals("id", userId));
-                if (permissionsService.notAdmin(getUserId())) {
+                if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check] 
                     conditions.add(new Condition.Permission(
-                            User.class, getUserId(), ManagedUser.class).excludeGroups()); // &line[excludeGroups]
+                            User.class, getUserId(), ManagedUser.class).excludeGroups()); // &line[Permission_Check]
                 }
                 users.add(storage.getObject(
                         User.class, new Request(new Columns.All(), Condition.merge(conditions))));

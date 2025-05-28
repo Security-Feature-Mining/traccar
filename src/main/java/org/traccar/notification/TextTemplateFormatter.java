@@ -43,12 +43,12 @@ public class TextTemplateFormatter {
     private static final Logger LOGGER = LoggerFactory.getLogger(TextTemplateFormatter.class);
 
     private final VelocityEngine velocityEngine;
-    private final TokenManager tokenManager;
+    private final TokenManager tokenManager; // &line[Token_Management]
 
     @Inject
     public TextTemplateFormatter(VelocityEngine velocityEngine, TokenManager tokenManager) {
         this.velocityEngine = velocityEngine;
-        this.tokenManager = tokenManager;
+        this.tokenManager = tokenManager; // &line[Token_Management]
     }
 
     public VelocityContext prepareContext(Server server, User user) {
@@ -59,7 +59,7 @@ public class TextTemplateFormatter {
             velocityContext.put("user", user);
             velocityContext.put("timezone", UserUtil.getTimezone(server, user));
             try {
-                velocityContext.put("token", tokenManager.generateToken(user.getId())); // &line[generateToken]
+                velocityContext.put("token", tokenManager.generateToken(user.getId())); // &line[Token_Generation]
             } catch (IOException | GeneralSecurityException | StorageException e) {
                 LOGGER.warn("Token generation failed", e);
             }

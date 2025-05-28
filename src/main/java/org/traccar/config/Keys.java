@@ -707,15 +707,18 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             "groups");
 
+// &begin[Permission_Definition]
     /**
      * OpenID Connect group to restrict access to.
      * If this is not provided, all OpenID users will have access to Traccar.
      * This option will only work if your OpenID provider supports the groups scope.
      */
     public static final ConfigKey<String> OPENID_ALLOW_GROUP = new StringConfigKey(
-        "openid.allowGroup",
-        List.of(KeyType.CONFIG));
+            "openid.allowGroup",
+            List.of(KeyType.CONFIG));
+// &end[Permission_Definition]
 
+// &begin[Role_Definition]
     /**
      * OpenID Connect group to grant admin access.
      * If this is not provided, no groups will be granted admin access.
@@ -724,6 +727,7 @@ public final class Keys {
     public static final ConfigKey<String> OPENID_ADMIN_GROUP = new StringConfigKey(
             "openid.adminGroup",
             List.of(KeyType.CONFIG));
+// &end[Role_Definition]
 
     /**
      * If no data is reported by a device for the given amount of time, status changes from online to unknown. Value is

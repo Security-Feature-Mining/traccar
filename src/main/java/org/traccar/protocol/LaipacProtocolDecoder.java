@@ -139,18 +139,20 @@ public class LaipacProtocolDecoder extends BaseProtocolDecoder {
 
         if (responseCode != null) {
             String response = "$AVCFG," + devicePassword + "," + responseCode;
-            response += Checksum.nmea(response.substring(1)) + "\r\n";
+            response += Checksum.nmea(response.substring(1)) + "\r\n"; // &line[Checksum] 
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }
 
     }
 
     private void sendAcknowledge(
-            String status, String event, String checksum, Channel channel, SocketAddress remoteAddress) {
+            String status, String event, String checksum, Channel channel, SocketAddress remoteAddress) { // &line[Checksum] 
 
         if (Character.isLowerCase(status.charAt(0))) {
+            // &begin[Checksum]
             String response = "$EAVACK," + event + "," + checksum;
             response += Checksum.nmea(response.substring(1)) + "\r\n";
+            // &end[Checksum]
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }
 
@@ -241,11 +243,11 @@ public class LaipacProtocolDecoder extends BaseProtocolDecoder {
 
         parser.next(); // unused
 
-        String checksum = parser.next();
+        String checksum = parser.next(); // &line[Checksum] 
 
         if (channel != null) {
 
-            sendAcknowledge(status, event, checksum, channel, remoteAddress);
+            sendAcknowledge(status, event, checksum, channel, remoteAddress); // &line[Checksum] 
 
             String devicePassword = AttributeUtil.getDevicePassword(
                     getCacheManager(), deviceSession.getDeviceId(), getProtocolName(), DEFAULT_DEVICE_PASSWORD);

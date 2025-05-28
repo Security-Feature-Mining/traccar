@@ -33,10 +33,11 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+// &begin[Memory_Storage]
 public class MemoryStorage extends Storage {
 
     private final Map<Class<?>, Map<Long, Object>> objects = new HashMap<>();
-    private final Map<Pair<Class<?>, Class<?>>, Set<Pair<Long, Long>>> permissions = new HashMap<>();
+    private final Map<Pair<Class<?>, Class<?>>, Set<Pair<Long, Long>>> permissions = new HashMap<>(); // &line[Permission_Management]
 
     private final AtomicLong increment = new AtomicLong();
 
@@ -159,12 +160,12 @@ public class MemoryStorage extends Storage {
         objects.computeIfAbsent(clazz, key -> new HashMap<>()).remove(id);
     }
 
+    // &begin[Permission_Management]
     private Set<Pair<Long, Long>> getPermissionsSet(Class<?> ownerClass, Class<?> propertyClass) {
         return permissions.computeIfAbsent(new Pair<>(ownerClass, propertyClass), k -> new HashSet<>());
     }
 
     @Override
-// &begin[getPermissions]
     public List<Permission> getPermissions(
             Class<? extends BaseModel> ownerClass, long ownerId,
             Class<? extends BaseModel> propertyClass, long propertyId) {
@@ -174,19 +175,22 @@ public class MemoryStorage extends Storage {
                 .map(pair -> new Permission(ownerClass, pair.first(), propertyClass, pair.second()))
                 .collect(Collectors.toList());
     }
-    // &end[getPermissions]
+
+    // &end[Permission_Management]
+// &begin[Permission_Assignment]
     @Override
-// &begin[addPermission]
     public void addPermission(Permission permission) {
         getPermissionsSet(permission.getOwnerClass(), permission.getPropertyClass())
                 .add(new Pair<>(permission.getOwnerId(), permission.getPropertyId()));
     }
-    // &end[addPermission]
+
+    // &end[Permission_Assignment]
+// &begin[Permission_Invalidation]
     @Override
-// &begin[removePermission]
     public void removePermission(Permission permission) {
         getPermissionsSet(permission.getOwnerClass(), permission.getPropertyClass())
                 .remove(new Pair<>(permission.getOwnerId(), permission.getPropertyId()));
     }
-// &end[removePermission]
+// &end[Permission_Invalidation]
 }
+// &end[Memory_Storage]

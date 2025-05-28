@@ -92,6 +92,7 @@ public final class AttributeUtil {
         return key.getDefaultValue();
     }
 
+    // &begin[DISCUSS]
     public static String getDevicePassword(
             CacheManager cacheManager, long deviceId, String protocol, String defaultPassword) {
 
@@ -109,6 +110,7 @@ public final class AttributeUtil {
 
         return defaultPassword;
     }
+    // &end[DISCUSS]
 
     public static class CacheProvider implements Provider {
 

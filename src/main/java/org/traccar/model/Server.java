@@ -34,6 +34,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
         this.registration = registration;
     }
 
+    // &begin[Permission_Definition]
     private boolean readonly;
 
     @Override
@@ -46,7 +47,6 @@ public class Server extends ExtendedModel implements UserRestrictions {
     }
 
     private boolean deviceReadonly;
-
     @Override
     public boolean getDeviceReadonly() {
         return deviceReadonly;
@@ -55,6 +55,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
     public void setDeviceReadonly(boolean deviceReadonly) {
         this.deviceReadonly = deviceReadonly;
     }
+    // &end[Permission_Definition]
 
     private String map;
 
@@ -157,6 +158,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
         this.limitCommands = limitCommands;
     }
 
+    // &begin[Permission_Definition]
     private boolean disableReports;
 
     @Override
@@ -178,6 +180,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
     public void setFixedEmail(boolean fixedEmail) {
         this.fixedEmail = fixedEmail;
     }
+    // &end[Permission_Definition]
 
     private String poiLayer;
 
@@ -264,6 +267,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
         this.newServer = newServer;
     }
 
+    // &begin[OpenID_Authentication]
     private boolean openIdEnabled;
 
     @QueryIgnore
@@ -287,4 +291,5 @@ public class Server extends ExtendedModel implements UserRestrictions {
     public void setOpenIdForce(boolean openIdForce) {
         this.openIdForce = openIdForce;
     }
+    // &end[OpenID_Authentication]
 }

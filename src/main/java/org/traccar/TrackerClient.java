@@ -48,24 +48,27 @@ public abstract class TrackerClient implements TrackerConnector {
         return false;
     }
 
+    // &begin[Secure_Communication]
     @Override
     public boolean isSecure() {
         return secure;
     }
+    // &end[Secure_Communication]
 
     public TrackerClient(Config config, String protocol) {
-        secure = config.getBoolean(Keys.PROTOCOL_SSL.withPrefix(protocol));
+        secure = config.getBoolean(Keys.PROTOCOL_SSL.withPrefix(protocol)); // &line[Secure_Communication]
         interval = config.getLong(Keys.PROTOCOL_INTERVAL.withPrefix(protocol));
         address = config.getString(Keys.PROTOCOL_ADDRESS.withPrefix(protocol));
         port = config.getInteger(Keys.PROTOCOL_PORT.withPrefix(protocol), secure ? 443 : 80);
         devices = config.getString(Keys.PROTOCOL_DEVICES.withPrefix(protocol)).split("[, ]");
 
         BasePipelineFactory pipelineFactory = new BasePipelineFactory(this, config, protocol) {
+            // &begin[Secure_Communication]
             @Override
             protected void addTransportHandlers(PipelineBuilder pipeline) {
                 try {
                     if (isSecure()) {
-                        SSLEngine engine = SSLContext.getDefault().createSSLEngine(); // &line[createSSLEngine]
+                        SSLEngine engine = SSLContext.getDefault().createSSLEngine();
                         engine.setUseClientMode(true);
                         pipeline.addLast(new SslHandler(engine));
                     }
@@ -73,6 +76,7 @@ public abstract class TrackerClient implements TrackerConnector {
                     throw new RuntimeException(e);
                 }
             }
+            // &end[Secure_Communication]
 
             @Override
             protected void addProtocolHandlers(PipelineBuilder pipeline) {

@@ -49,20 +49,22 @@ public final class Log {
     }
 
     private static final String STACK_PACKAGE = "org.traccar";
-    private static final int STACK_LIMIT = 4;
+    private static final int STACK_LIMIT = 4; // &line[Log_Limit] 
 
     private static class RollingFileHandler extends Handler {
 
         private final String name;
         private String suffix;
         private Writer writer;
-        private final boolean rotate;
+        private final boolean rotate; // &line[Log_Rotation]
         private final String template;
 
-        RollingFileHandler(String name, boolean rotate, String rotateInterval) {
+        RollingFileHandler(String name, boolean rotate, String rotateInterval) { // &line[Log_Rotation]
             this.name = name;
+            // &begin[Log_Rotation]
             this.rotate = rotate;
             this.template = rotateInterval.equalsIgnoreCase("HOUR") ? "yyyyMMddHH" : "yyyyMMdd";
+            // &end[Log_Rotation]
         }
 
         @Override
@@ -70,7 +72,7 @@ public final class Log {
             if (isLoggable(record)) {
                 try {
                     String suffix = "";
-                    if (rotate) {
+                    if (rotate) { // &line[Log_Rotation]
                         suffix = new SimpleDateFormat(template).format(new Date(record.getMillis()));
                         if (writer != null && !suffix.equals(this.suffix)) {
                             writer.close();
@@ -183,13 +185,15 @@ public final class Log {
                 config.getString(Keys.LOGGER_FILE),
                 config.getString(Keys.LOGGER_LEVEL),
                 config.getBoolean(Keys.LOGGER_FULL_STACK_TRACES),
+                // &begin[Log_Rotation]
                 config.getBoolean(Keys.LOGGER_ROTATE),
                 config.getString(Keys.LOGGER_ROTATE_INTERVAL));
+        // &end[Log_Rotation]
     }
 
     private static void setupLogger(
             boolean console, String file, String levelString,
-            boolean fullStackTraces, boolean rotate, String rotateInterval) {
+            boolean fullStackTraces, boolean rotate, String rotateInterval) { // &line[Log_Rotation]
 
         Logger rootLogger = Logger.getLogger("");
         for (Handler handler : rootLogger.getHandlers()) {
@@ -200,7 +204,7 @@ public final class Log {
         if (console) {
             handler = new ConsoleHandler();
         } else {
-            handler = new RollingFileHandler(file, rotate, rotateInterval);
+            handler = new RollingFileHandler(file, rotate, rotateInterval); // &line[Log_Rotation]
         }
 
         handler.setFormatter(new LogFormatter(fullStackTraces));
@@ -271,6 +275,7 @@ public final class Log {
         return s.toString();
     }
 
+    // &begin[DISCUSS]
     public static long[] getStorageSpace() {
         var stores = new ArrayList<Pair<Long, Long>>();
         for (FileStore store : FileSystems.getDefault().getFileStores()) {
@@ -289,5 +294,6 @@ public final class Log {
                 .mapToLong(Long::longValue)
                 .toArray();
     }
+    // &end[DISCUSS]
 
 }

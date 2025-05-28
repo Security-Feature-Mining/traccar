@@ -43,7 +43,6 @@ public class ThrottlingFilter extends DoSFilter {
         setMaxRequestMs(config.getInteger(Keys.WEB_MAX_REQUEST_SECONDS) * 1000L);
     }
 
-    // &begin[User]
     @Override
     protected String extractUserId(ServletRequest request) {
         // &begin[User_Session]
@@ -55,6 +54,5 @@ public class ThrottlingFilter extends DoSFilter {
         }
         return null;
     }
-    // &end[User]
 }
 // &end[Throttling_Filter]

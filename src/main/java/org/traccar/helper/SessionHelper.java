@@ -20,10 +20,11 @@ import java.util.Date;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+// &begin[User_Session]
 public final class SessionHelper {
 
     public static final String USER_ID_KEY = "userId";
-    public static final String EXPIRATION_KEY = "expiration";
+    public static final String EXPIRATION_KEY = "expiration"; // &line[Session_Timeout, DISCUSS] 
 
     private SessionHelper() {
     }
@@ -40,3 +41,4 @@ public final class SessionHelper {
     }
 
 }
+// &end[User_Session]

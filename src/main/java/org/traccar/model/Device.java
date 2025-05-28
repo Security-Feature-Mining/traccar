@@ -136,6 +136,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
         this.category = category;
     }
 
+    // &begin[DISCUSS]
     private boolean disabled;
 
     @Override
@@ -159,6 +160,7 @@ public class Device extends GroupedModel implements Disableable, Schedulable {
     public void setExpirationTime(Date expirationTime) {
         this.expirationTime = expirationTime;
     }
+    // &end[DISCUSS]
 
     private boolean motionStreak;
 

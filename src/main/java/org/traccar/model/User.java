@@ -25,7 +25,6 @@ import org.traccar.storage.StorageName;
 import java.util.Date;
 import java.util.HashMap;
 
-// &begin[User]
 @StorageName("tc_users")
 public class User extends ExtendedModel implements UserRestrictions, Disableable {
 
@@ -39,6 +38,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.name = name;
     }
 
+    // &begin[User_Login]
     private String login;
 
     public String getLogin() {
@@ -48,6 +48,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setLogin(String login) {
         this.login = login;
     }
+    // &end[User_Login]
 
     private String email;
 
@@ -69,6 +70,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.phone = phone != null ? phone.trim() : null;
     }
 
+    // &begin[Permission_Definition]
     private boolean readonly;
 
     @Override
@@ -79,6 +81,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
     }
+    // &end[Permission_Definition]
 
     // &begin[Role_Definition]
     private boolean administrator;
@@ -148,6 +151,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.coordinateFormat = coordinateFormat;
     }
 
+    // &begin[User_Check]
     private boolean disabled;
 
     @Override
@@ -159,7 +163,9 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
+    // &end[User_Check]
 
+    // &begin[Token_Expiration]
     private Date expirationTime;
 
     @Override
@@ -171,6 +177,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setExpirationTime(Date expirationTime) {
         this.expirationTime = expirationTime;
     }
+    // &end[Token_Expiration]
 
     private int deviceLimit;
 
@@ -192,6 +199,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.userLimit = userLimit;
     }
 
+    // &begin[Permission_Definition]
     private boolean deviceReadonly;
 
     @Override
@@ -202,6 +210,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setDeviceReadonly(boolean deviceReadonly) {
         this.deviceReadonly = deviceReadonly;
     }
+    // &end[Permission_Definition]
 
     private boolean limitCommands;
 
@@ -214,6 +223,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.limitCommands = limitCommands;
     }
 
+    // &begin[Permission_Definition]
     private boolean disableReports;
 
     @Override
@@ -235,6 +245,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setFixedEmail(boolean fixedEmail) {
         this.fixedEmail = fixedEmail;
     }
+    // &end[Permission_Definition]
 
     private String poiLayer;
 
@@ -246,6 +257,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.poiLayer = poiLayer;
     }
 
+    // &begin[TOTP_Authentication]
     private String totpKey;
 
     public String getTotpKey() {
@@ -255,7 +267,9 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setTotpKey(String totpKey) {
         this.totpKey = totpKey;
     }
+    // &end[TOTP_Authentication]
 
+    // &begin[User_Check]
     private boolean temporary;
 
     public boolean getTemporary() {
@@ -265,6 +279,8 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setTemporary(boolean temporary) {
         this.temporary = temporary;
     }
+
+    // &end[User_Check]
     // &begin[Password]
     @QueryIgnore
     public String getPassword() {
@@ -282,7 +298,6 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         }
     }
 
-
     private String hashedPassword;
 
     @JsonIgnore
@@ -295,7 +310,6 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
-
     // &end[Password]
     // &begin[Salting]
     private String salt;
@@ -330,6 +344,4 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         }
         return thisAttributes.equals(otherAttributes);
     }
-
 }
-// &end[User]

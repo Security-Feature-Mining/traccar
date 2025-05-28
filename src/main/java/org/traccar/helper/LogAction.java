@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.traccar.model.BaseModel;
 
+// &begin[Action_Logging]
 public final class LogAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogAction.class);
@@ -40,16 +41,20 @@ public final class LogAction {
     private static final String ACTION_LINK = "link";
     private static final String ACTION_UNLINK = "unlink";
 
+    // &begin[Authentication_Logging]
     private static final String ACTION_LOGIN = "login";
     private static final String ACTION_LOGOUT = "logout";
+    // &end[Authentication_Logging]
 
     private static final String ACTION_ACCUMULATORS = "accumulators";
     private static final String ACTION_COMMAND = "command";
 
     private static final String PATTERN_OBJECT = "user: %d, action: %s, object: %s, id: %d";
     private static final String PATTERN_LINK = "user: %d, action: %s, owner: %s, id: %d, property: %s, id: %d";
+    // &begin[Authentication_Logging]
     private static final String PATTERN_LOGIN = "user: %d, action: %s, from: %s";
     private static final String PATTERN_LOGIN_FAILED = "login failed from: %s";
+    // &end[Authentication_Logging]
     private static final String PATTERN_ACCUMULATORS = "user: %d, action: %s, deviceId: %d";
     private static final String PATTERN_COMMAND_DEVICE = "user: %d, action: %s, deviceId: %d, type: %s";
     private static final String PATTERN_COMMAND_GROUP = "user: %d, action: %s, groupId: %d, type: %s";
@@ -75,6 +80,7 @@ public final class LogAction {
         logLinkAction(ACTION_UNLINK, userId, owner, ownerId, property, propertyId);
     }
 
+    // &begin[Authentication_Logging]
     public static void login(long userId, String remoteAddress) {
         logLoginAction(ACTION_LOGIN, userId, remoteAddress);
     }
@@ -89,6 +95,7 @@ public final class LogAction {
         }
         LOGGER.info(String.format(PATTERN_LOGIN_FAILED, remoteAddress));
     }
+    // &end[Authentication_Logging]
 
     public static void resetAccumulators(long userId, long deviceId) {
         LOGGER.info(String.format(
@@ -126,11 +133,14 @@ public final class LogAction {
                 Introspector.decapitalize(property.getSimpleName()), propertyId));
     }
 
+    // &begin[Authentication_Logging]
     private static void logLoginAction(String action, long userId, String remoteAddress) {
         if (remoteAddress == null || remoteAddress.isEmpty()) {
             remoteAddress = "unknown";
         }
         LOGGER.info(String.format(PATTERN_LOGIN, userId, action, remoteAddress));
     }
+    // &end[Authentication_Logging]
 
 }
+// &end[Action_Logging]

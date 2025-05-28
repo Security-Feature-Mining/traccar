@@ -90,7 +90,7 @@ public class ReportUtils {
                 new Columns.All(),
                 new Condition.And(
                         new Condition.Equals("id", objectId),
-                        new Condition.Permission(User.class, userId, clazz))));
+                        new Condition.Permission(User.class, userId, clazz)))); // &line[Permission_Check]
     }
 
     public void checkPeriodLimit(Date from, Date to) {

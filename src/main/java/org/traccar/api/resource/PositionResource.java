@@ -70,14 +70,14 @@ public class PositionResource extends BaseResource {
             for (long positionId : positionIds) {
                 Position position = storage.getObject(Position.class, new Request(
                         new Columns.All(), new Condition.Equals("id", positionId)));
-                permissionsService.checkPermission(Device.class, getUserId(), position.getDeviceId());
+                permissionsService.checkPermission(Device.class, getUserId(), position.getDeviceId()); // &line[Permission_Check]
                 positions.add(position);
             }
             return positions;
         } else if (deviceId > 0) {
             permissionsService.checkPermission(Device.class, getUserId(), deviceId);
             if (from != null && to != null) {
-                permissionsService.checkRestriction(getUserId(), UserRestrictions::getDisableReports);
+                permissionsService.checkRestriction(getUserId(), UserRestrictions::getDisableReports); // &line[Permission_Check]
                 return PositionUtil.getPositions(storage, deviceId, from, to);
             } else {
                 return storage.getObjects(Position.class, new Request(
@@ -93,7 +93,7 @@ public class PositionResource extends BaseResource {
             @QueryParam("deviceId") long deviceId,
             @QueryParam("from") Date from, @QueryParam("to") Date to) throws StorageException {
         permissionsService.checkPermission(Device.class, getUserId(), deviceId);
-        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly);
+        permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly); // &line[Permission_Check]
 
         var conditions = new LinkedList<Condition>();
         conditions.add(new Condition.Equals("deviceId", deviceId));
@@ -145,7 +145,7 @@ public class PositionResource extends BaseResource {
     public Response getGpx(
             @QueryParam("deviceId") long deviceId,
             @QueryParam("from") Date from, @QueryParam("to") Date to) throws StorageException {
-        permissionsService.checkPermission(Device.class, getUserId(), deviceId);
+        permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
         StreamingOutput stream = output -> {
             try {
                 gpxExportProvider.generate(output, deviceId, from, to);

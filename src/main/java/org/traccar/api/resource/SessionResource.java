@@ -76,12 +76,12 @@ public class SessionResource extends BaseResource {
     @Context
     private HttpServletRequest request;
 
-    // &begin[User]
+    // &begin[User_Authentication]
     @PermitAll
     @GET
     public User get(@QueryParam("token") String token) throws StorageException, IOException, GeneralSecurityException {
 
-        // &begin[User_Login]
+        // &begin[Token_Authentication]
         if (token != null) {
             LoginResult loginResult = loginService.login(token);
             if (loginResult != null) {
@@ -90,11 +90,11 @@ public class SessionResource extends BaseResource {
                 return user;
             }
         }
-        // &end[User_Login]
+        // &end[Token_Authentication]
 
         Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY);
         if (userId != null) {
-            User user = permissionsService.getUser(userId); // &line[DISCUSS]
+            User user = permissionsService.getUser(userId);
             if (user != null) {
                 return user;
             }
@@ -102,6 +102,7 @@ public class SessionResource extends BaseResource {
 
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
     }
+    // &end[User_Authentication]
 
     @Path("{id}")
     @GET
@@ -135,7 +136,7 @@ public class SessionResource extends BaseResource {
             SessionHelper.userLogin(request, user, null);
             return user;
         } else {
-            LogAction.failedLogin(WebHelper.retrieveRemoteAddress(request)); // &line[Login_Logging]
+            LogAction.failedLogin(WebHelper.retrieveRemoteAddress(request)); // &line[Authentication_Logging]
             throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).build());
         }
     }
@@ -144,13 +145,12 @@ public class SessionResource extends BaseResource {
     // &begin[User_Logout]
     @DELETE
     public Response remove() {
-        LogAction.logout(getUserId(), WebHelper.retrieveRemoteAddress(request));
+        LogAction.logout(getUserId(), WebHelper.retrieveRemoteAddress(request)); // &line[Authentication_Logging]
         request.getSession().removeAttribute(SessionHelper.USER_ID_KEY);
         return Response.noContent().build();
     }
     // &end[User_Logout]
-    // &end[User]
-    // &begin[Session_Timeout]
+    // &begin[Token_Expiration]
     @Path("token")
     @POST
     public String requestToken(
@@ -159,9 +159,9 @@ public class SessionResource extends BaseResource {
         if (currentExpiration != null && currentExpiration.before(expiration)) {
             expiration = currentExpiration;
         }
-        return tokenManager.generateToken(getUserId(), expiration);
+        // &end[Token_Expiration]
+        return tokenManager.generateToken(getUserId(), expiration); // &line[Token_Generation] 
     }
-    // &end[Session_Timeout]
     // &begin[OpenID_Authentication]
     @PermitAll
     @Path("openid/auth")
@@ -170,16 +170,18 @@ public class SessionResource extends BaseResource {
         return Response.seeOther(openIdProvider.createAuthUri()).build();
     }
 
+    // &begin[Token_Generation]
     @PermitAll
     @Path("openid/callback")
     @GET
-    public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException { // &line[requestToken]
+    public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException {
         StringBuilder requestUrl = new StringBuilder(request.getRequestURL().toString());
         String queryString = request.getQueryString();
         String requestUri = requestUrl.append('?').append(queryString).toString();
 
         return Response.seeOther(openIdProvider.handleCallback(URI.create(requestUri), request)).build();
     }
+    // &end[Token_Generation]
     // &end[OpenID_Authentication]
 }
 // &end[User_Session]

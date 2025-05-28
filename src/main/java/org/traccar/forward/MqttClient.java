@@ -39,7 +39,7 @@ public class MqttClient {
             throw new RuntimeException(e);
         }
 
-        Mqtt5SimpleAuth simpleAuth = this.getSimpleAuth(uri);
+        Mqtt5SimpleAuth simpleAuth = this.getSimpleAuth(uri); // &line[MQTT_Authentication, DISCUSS] 
 
         String host = uri.getHost();
         int port = uri.getPort();
@@ -52,6 +52,7 @@ public class MqttClient {
         });
     }
 
+    // &begin[MQTT_Authentication]
     private Mqtt5SimpleAuth getSimpleAuth(URI uri) {
         String userInfo = uri.getUserInfo();
         Mqtt5SimpleAuth simpleAuth = null;
@@ -66,6 +67,7 @@ public class MqttClient {
         }
         return simpleAuth;
     }
+    // &end[MQTT_Authentication]
 
     public void publish(
             String pubTopic, String payload, BiConsumer<? super Mqtt5PublishResult, ? super Throwable> whenComplete) {

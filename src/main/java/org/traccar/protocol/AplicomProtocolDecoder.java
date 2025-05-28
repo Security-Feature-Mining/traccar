@@ -57,6 +57,7 @@ public class AplicomProtocolDecoder extends BaseProtocolDecoder {
 
         } else {
 
+            // &begin[Imei_Validation]
             // Try TC65i
             long imei = IMEI_BASE_TC65I_V11 + unitId;
             if (validateImei(imei)) {
@@ -74,6 +75,7 @@ public class AplicomProtocolDecoder extends BaseProtocolDecoder {
             if (validateImei(imei)) {
                 return imei;
             }
+            // &end[Imei_Validation]
 
         }
 

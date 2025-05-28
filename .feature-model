@@ -1,21 +1,27 @@
 Security_Features
     Access_Control
 		Authentication
-		    Token_Validation
-		    Token_Expiration
+		    Authentication_Scheme
+		        Basic_Authentication
+		    Token_Authentication
+		        Token_Generation
+                Token_Validation
+                Token_Expiration
+                Token_Management
 		    Ldap_Authentication
 		    Bearer_Authentication
 			Credentials
-		        Basic_Authentication
-			    User
-			        User_Login
-                        Admin_Login
-                    User_Logout
+			    User_Authentication
+                User_Login
+                    Admin_Login
+                User_Logout
+                User_Check
 			    Password
 			        Password_Definition
 			        Password_Update
 			        Password_Reset
 			        Password_Validation
+			    MQTT_Authentication
 			One_Time_Password
 			Certificate_Authentication
 			Multifactor_Authentication
@@ -23,11 +29,16 @@ Security_Features
 			Single_Sign_On
 			    OpenID_Authentication
 		Authorization
+		    Authorization_Scheme
+		    Authorization_Header
 		    Permission_Check
+		    Permission_Check_Server
 		    Permission_Assignment
 		    Permission_Definition
 		    Permission_Invalidation
+		    Permission_Management
 		    User_Based_Request_Authorization
+		    Security_Request_Filter
 			Access_Quota_Limitation
 			    Throttling_Filter
 			Attribute_based_Access_Control
@@ -45,43 +56,49 @@ Security_Features
 			Application_Mode_based_Access_Control
 	Cryptography
 		Encryption
+		    Secure_Communication
 			Stream_Ciphers
 			Block_Ciphers
 			    AES
+			        AES_Decryption
 			Symmetric_Key_Cryptography
 			Asymmetric_Key_Cryptography
 			Hybrid_Cryptosystems
 		Cryptographic_Hashing
 		    Sha1_Hashing
+		    Sha256_Hashing
 		    Salting
 		Key_Management
 			Key_Generation
 			    PBKDF2_Key_Generation
 			    TOTP_Key_Generation
+			    X509_Key_Generation
+			    PKCS8_Key_Generation
 			Key_Distribution
 			Group_Key_Management
 			Key_Storage
 			Key_Revocation
 		Signature
 			Message_Signing
+			    ECDSA_Signature_Signing
 			Certification
 			Message_Authentication
+			    ECDSA_Signature_Verification
 			Digital_Watermarking
 		Steganography
     Security_Monitoring
 		Logging
 		    Access_Logging
-		    Login_Logging
-		    Edit_Logging
-		    Link_Logging
-		    Create_Object_Logging
-		    Permission_Logging
-		    User_Creation_Logging
+            Authentication_Logging
+            Action_Logging
+            Permission_Change_Logging
+            Permission_Logging
 		Automated_Response
 		History_Maintenance
     Secure_Data_Handling
 		Data_Validation
 			Input_Validation
+			    Imei_Validation
 				Blacklisting
 				Whitelisting
 				Download_Verification
@@ -92,25 +109,32 @@ Security_Features
 			Parameterized_Prepared_Statement
 		Retention_Control
 		Secure_Storage
+		    Memory_Storage
+            Database_Storage
 		Trusted_Sources
 			Time_Source
+			    Server_Time
 			Source_of_Randomness
 			    Secure_Random
     System_State_Protection
+        Checksum
 		Resource_Management
-		    Read_Write_Lock
+		    Log_Limit
+		    Log_Rotation
 		System_State_Validation
-		    Checksum
-		    Imei_Validation
+		    Read_Write_Lock
 		    Permission_Type_Validation
 		    Invalidate_Object
 		Session_Management
 		    User_Session
-		    Session
+		    Network_Session
 		    Session_Invalidation
+		    Session_Persistence
+		    Cookie_Same_Site
 			Replay_Attack_Prevention
 			Session_Fixation_Protection
 			Session_Takeover_Prevention
+			    Cookie_Http_only
 			Session_Timeout
 		State_Synchronization
     Miscellaneous

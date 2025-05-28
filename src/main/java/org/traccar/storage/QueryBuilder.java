@@ -52,7 +52,7 @@ public final class QueryBuilder {
 
     private final Map<String, List<Integer>> indexMap = new HashMap<>();
     private Connection connection;
-    private PreparedStatement statement;
+    private PreparedStatement statement; // &line[Parameterized_Prepared_Statement] 
     private final String query;
     private final boolean returnGeneratedKeys;
 
@@ -66,12 +66,14 @@ public final class QueryBuilder {
         if (query != null) {
             connection = dataSource.getConnection();
             String parsedQuery = parse(query.trim(), indexMap);
+            // &begin[Parameterized_Prepared_Statement]
             try {
                 if (returnGeneratedKeys) {
                     statement = connection.prepareStatement(parsedQuery, Statement.RETURN_GENERATED_KEYS);
                 } else {
                     statement = connection.prepareStatement(parsedQuery);
                 }
+                // &end[Parameterized_Prepared_Statement]
             } catch (SQLException error) {
                 connection.close();
                 throw error;
@@ -481,7 +483,7 @@ public final class QueryBuilder {
         return 0;
     }
 
-// &begin[executePermissionsQuery]
+// &begin[Permission_Assignment]
     public List<Permission> executePermissionsQuery() throws SQLException {
         List<Permission> result = new LinkedList<>();
         if (query != null) {
@@ -506,5 +508,5 @@ public final class QueryBuilder {
 
         return result;
     }
-    // &end[executePermissionsQuery]
+    // &end[Permission_Assignment]
 }

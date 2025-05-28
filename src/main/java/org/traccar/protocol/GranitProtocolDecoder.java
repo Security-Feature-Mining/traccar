@@ -40,13 +40,16 @@ public class GranitProtocolDecoder extends BaseProtocolDecoder {
         super(protocol);
     }
 
+    // &begin[Checksum]
     public static void appendChecksum(ByteBuf buffer, int length) {
         buffer.writeByte('*');
-        int checksum = Checksum.xor(buffer.nioBuffer(0, length)) & 0xFF; // &line[Checksum]
+        int checksum = Checksum.xor(buffer.nioBuffer(0, length)) & 0xFF;
         String checksumString = String.format("%02X", checksum);
         buffer.writeBytes(checksumString.getBytes(StandardCharsets.US_ASCII));
-        buffer.writeByte('\r'); buffer.writeByte('\n');
+        buffer.writeByte('\r');
+        buffer.writeByte('\n');
     }
+    // &end[Checksum]
 
     private static void sendResponseCurrent(Channel channel, int deviceId, long time) {
         ByteBuf response = Unpooled.buffer();
@@ -54,7 +57,7 @@ public class GranitProtocolDecoder extends BaseProtocolDecoder {
         response.writeShortLE(6); // length
         response.writeInt((int) time);
         response.writeShortLE(deviceId);
-        appendChecksum(response, 16);
+        appendChecksum(response, 16); // &line[Checksum]
         channel.writeAndFlush(new NetworkMessage(response, channel.remoteAddress()));
     }
 
@@ -64,7 +67,7 @@ public class GranitProtocolDecoder extends BaseProtocolDecoder {
         response.writeShortLE(4); // length
         response.writeShortLE(packNum);
         response.writeShortLE(deviceId);
-        appendChecksum(response, 14);
+        appendChecksum(response, 14); // &line[Checksum]
         channel.writeAndFlush(new NetworkMessage(response, channel.remoteAddress()));
     }
 

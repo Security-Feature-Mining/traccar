@@ -70,7 +70,7 @@ public class GpsGateProtocolDecoder extends BaseProtocolDecoder {
     private void send(Channel channel, SocketAddress remoteAddress, String message) {
         if (channel != null) {
             channel.writeAndFlush(new NetworkMessage(
-                    message + Checksum.nmea(message.substring(1)) + "\r\n", remoteAddress));
+                    message + Checksum.nmea(message.substring(1)) + "\r\n", remoteAddress)); // &line[Checksum]  
         }
     }
 

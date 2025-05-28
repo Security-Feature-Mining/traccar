@@ -21,6 +21,7 @@ import org.traccar.session.cache.CacheManager;
 
 import java.util.Date;
 
+// &begin[DISCUSS]
 public class OutdatedHandler extends BasePositionHandler {
 
     private final CacheManager cacheManager;
@@ -54,3 +55,4 @@ public class OutdatedHandler extends BasePositionHandler {
     }
 
 }
+// &end[DISCUSS]

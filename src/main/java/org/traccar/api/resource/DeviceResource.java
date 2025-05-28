@@ -198,7 +198,7 @@ public class DeviceResource extends BaseObjectResource<Device> {
                 new Columns.All(),
                 new Condition.And(
                         new Condition.Equals("id", deviceId),
-                        new Condition.Permission(User.class, getUserId(), Device.class)))); // &line[Permission_Check, DISCUSS]
+                        new Condition.Permission(User.class, getUserId(), Device.class)))); // &line[Permission_Check]
         if (device != null) {
             String name = "device";
             String extension = imageExtension(type);
@@ -229,12 +229,14 @@ public class DeviceResource extends BaseObjectResource<Device> {
             @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException {
 
         User user = permissionsService.getUser(getUserId());
+        // &begin[Permission_Check]
         if (permissionsService.getServer().getBoolean(Keys.DEVICE_SHARE_DISABLE.getKey())) {
-            throw new SecurityException("Sharing is disabled"); // &line[SecurityExceptionSharing]
+            throw new SecurityException("Sharing is disabled");
         }
         if (user.getTemporary()) {
-            throw new SecurityException("Temporary user");  // &line[SecurityExceptionTempUser]
+            throw new SecurityException("Temporary user");
         }
+        // &end[Permission_Check]
         // &begin[Token_Expiration]
         if (user.getExpirationTime() != null && user.getExpirationTime().before(expiration)) {
             expiration = user.getExpirationTime();
@@ -245,7 +247,7 @@ public class DeviceResource extends BaseObjectResource<Device> {
                 new Columns.All(),
                 new Condition.And(
                         new Condition.Equals("id", deviceId),
-                        new Condition.Permission(User.class, user.getId(), Device.class))));
+                        new Condition.Permission(User.class, user.getId(), Device.class)))); // &line[Permission_Check]
 
         String shareEmail = user.getEmail() + ":" + device.getUniqueId();
         User share = storage.getObject(User.class, new Request(
@@ -255,11 +257,13 @@ public class DeviceResource extends BaseObjectResource<Device> {
             share = new User();
             share.setName(device.getName());
             share.setEmail(shareEmail);
-            share.setExpirationTime(expiration);
-            share.setTemporary(true);
-            share.setReadonly(true);
+            share.setExpirationTime(expiration); // &line[Token_Expiration]
+            share.setTemporary(true); // &line[Role_Assignment]
+            share.setReadonly(true); // &line[Permission_Assignment]
+            // &begin[Permission_Check]
             share.setLimitCommands(user.getLimitCommands() || !config.getBoolean(Keys.WEB_SHARE_DEVICE_COMMANDS));
             share.setDisableReports(user.getDisableReports() || !config.getBoolean(Keys.WEB_SHARE_DEVICE_REPORTS));
+            // &end[Permission_Check]
 
             share.setId(storage.addObject(share, new Request(new Columns.Exclude("id"))));
 

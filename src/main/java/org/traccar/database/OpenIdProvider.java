@@ -62,6 +62,7 @@ import com.nimbusds.openid.connect.sdk.UserInfoRequest;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
+// &begin[OpenID_Authentication]
 public class OpenIdProvider {
     private final Boolean force;
     private final ClientID clientId;
@@ -71,17 +72,17 @@ public class OpenIdProvider {
     private final URI tokenUrl;
     private final URI userInfoUrl;
     private final URI baseUrl;
-    private final String adminGroup;
-    private final String allowGroup;
-    private final String groupsClaimName;
+    private final String adminGroup; // &line[Role_Definition]
+    private final String allowGroup; // &line[Permission_Definition]
+    private final String groupsClaimName; // &line[Permission_Definition]
 
-    private final LoginService loginService;
+    private final LoginService loginService; // &line[User_Login]
 
     @Inject
     public OpenIdProvider(Config config, LoginService loginService, HttpClient httpClient, ObjectMapper objectMapper)
-        throws InterruptedException, IOException, URISyntaxException {
+            throws InterruptedException, IOException, URISyntaxException {
 
-        this.loginService = loginService;
+        this.loginService = loginService; // &line[User_Login]
 
         force = config.getBoolean(Keys.OPENID_FORCE);
         clientId = new ClientID(config.getString(Keys.OPENID_CLIENT_ID));
@@ -92,9 +93,9 @@ public class OpenIdProvider {
 
         if (config.hasKey(Keys.OPENID_ISSUER_URL)) {
             HttpRequest httpRequest = HttpRequest.newBuilder(
-                URI.create(config.getString(Keys.OPENID_ISSUER_URL) + "/.well-known/openid-configuration"))
-                .header("Accept", "application/json")
-                .build();
+                            URI.create(config.getString(Keys.OPENID_ISSUER_URL) + "/.well-known/openid-configuration"))
+                    .header("Accept", "application/json")
+                    .build();
 
             String httpResponse = httpClient.send(httpRequest, BodyHandlers.ofString()).body();
 
@@ -110,16 +111,16 @@ public class OpenIdProvider {
             userInfoUrl = new URI(config.getString(Keys.OPENID_USERINFO_URL));
         }
 
-        adminGroup = config.getString(Keys.OPENID_ADMIN_GROUP);
-        allowGroup = config.getString(Keys.OPENID_ALLOW_GROUP);
-        groupsClaimName = config.getString(Keys.OPENID_GROUPS_CLAIM_NAME);
+        adminGroup = config.getString(Keys.OPENID_ADMIN_GROUP); // &line[Role_Definition]
+        allowGroup = config.getString(Keys.OPENID_ALLOW_GROUP); // &line[Permission_Definition]
+        groupsClaimName = config.getString(Keys.OPENID_GROUPS_CLAIM_NAME); // &line[Permission_Definition]
     }
 
     public URI createAuthUri() {
         Scope scope = new Scope("openid", "profile", "email");
 
-        if (adminGroup != null) {
-            scope.add(groupsClaimName);
+        if (adminGroup != null) { // &line[Role_Check]
+            scope.add(groupsClaimName); // &line[Permission_Definition]
         }
 
         AuthenticationRequest.Builder request = new AuthenticationRequest.Builder(
@@ -187,14 +188,16 @@ public class OpenIdProvider {
         List<String> userGroups = userInfo.getStringListClaim(groupsClaimName);
         boolean administrator = adminGroup != null && userGroups.contains(adminGroup);
 
-        if (!(administrator || allowGroup == null || userGroups.contains(allowGroup))) {
+        if (!(administrator || allowGroup == null || userGroups.contains(allowGroup))) { // &line[Role_Check]
             throw new GeneralSecurityException("Your OpenID Groups do not permit access to Traccar.");
         }
 
+        // &begin[User_Login]
         User user = loginService.login(
                 userInfo.getEmailAddress(), userInfo.getName(), administrator).getUser();
 
-        SessionHelper.userLogin(request, user, null);
+        SessionHelper.userLogin(request, user, null); // &line[User_Session]
+        // &end[User_Login]
 
         return baseUrl;
     }
@@ -203,3 +206,4 @@ public class OpenIdProvider {
         return force;
     }
 }
+// &end[OpenID_Authentication]

@@ -21,7 +21,7 @@ public interface TrackerConnector extends LifecycleObject {
 
     boolean isDatagram();
 
-    boolean isSecure();
+    boolean isSecure(); // &line[Secure_Communication] 
 
     ChannelGroup getChannelGroup();
 
