@@ -77,7 +77,7 @@ public class ServerResource extends BaseResource {
 
     @Inject
     @Nullable
-    private OpenIdProvider openIdProvider;
+    private OpenIdProvider openIdProvider; // &line[OpenID_Authentication]
 
     @Inject
     @Nullable
@@ -90,12 +90,14 @@ public class ServerResource extends BaseResource {
         server.setEmailEnabled(mailManager.getEmailEnabled());
         server.setTextEnabled(smsManager != null);
         server.setGeocoderEnabled(geocoder != null);
+        // &begin[OpenID_Authentication]
         server.setOpenIdEnabled(openIdProvider != null);
         server.setOpenIdForce(openIdProvider != null && openIdProvider.getForce());
+        // &end[OpenID_Authentication]
         User user = permissionsService.getUser(getUserId());
         if (user != null) {
-            if (user.getAdministrator()) {
-                server.setStorageSpace(Log.getStorageSpace());
+            if (user.getAdministrator()) { // &line[Role_Check]
+                server.setStorageSpace(Log.getStorageSpace()); // &line[Log_Limit] 
             }
         } else {
             server.setNewServer(UserUtil.isEmpty(storage));
@@ -105,12 +107,12 @@ public class ServerResource extends BaseResource {
 
     @PUT
     public Response update(Server server) throws Exception {
-        permissionsService.checkAdmin(getUserId());
+        permissionsService.checkAdmin(getUserId()); // &line[Role_Check]
         storage.updateObject(server, new Request(
                 new Columns.Exclude("id"),
                 new Condition.Equals("id", server.getId())));
-        cacheManager.invalidateObject(true, Server.class, server.getId(), ObjectOperation.UPDATE);
-        LogAction.edit(getUserId(), server);
+        cacheManager.invalidateObject(true, Server.class, server.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object]
+        LogAction.edit(getUserId(), server); // &line[Action_Logging]
         return Response.ok(server).build();
     }
 
@@ -134,7 +136,7 @@ public class ServerResource extends BaseResource {
     @POST
     @Consumes("*/*")
     public Response uploadFile(@PathParam("path") String path, File inputFile) throws IOException, StorageException {
-        permissionsService.checkAdmin(getUserId());
+        permissionsService.checkAdmin(getUserId()); // &line[Role_Check]
         String root = config.getString(Keys.WEB_OVERRIDE, config.getString(Keys.WEB_PATH));
 
         var rootPath = Paths.get(root).normalize();
@@ -157,14 +159,14 @@ public class ServerResource extends BaseResource {
     @Path("cache")
     @GET
     public String cache() throws StorageException {
-        permissionsService.checkAdmin(getUserId());
+        permissionsService.checkAdmin(getUserId()); // &line[Role_Check]
         return cacheManager.toString();
     }
 
     @Path("reboot")
     @POST
     public void reboot() throws StorageException {
-        permissionsService.checkAdmin(getUserId());
+        permissionsService.checkAdmin(getUserId()); // &line[Role_Check]
         System.exit(130);
     }
 

@@ -57,9 +57,10 @@ public class AsyncSocketServlet extends JettyWebSocketServlet {
 
     @Override
     public void configure(JettyWebSocketServletFactory factory) {
-        factory.setIdleTimeout(Duration.ofMillis(config.getLong(Keys.WEB_TIMEOUT)));
+        factory.setIdleTimeout(Duration.ofMillis(config.getLong(Keys.WEB_TIMEOUT))); // &line[Session_Timeout] 
         factory.setCreator((req, resp) -> {
             Long userId = null;
+            // &begin[Token_Management]
             List<String> tokens = req.getParameterMap().get("token");
             if (tokens != null && !tokens.isEmpty()) {
                 String token = tokens.iterator().next();
@@ -68,6 +69,7 @@ public class AsyncSocketServlet extends JettyWebSocketServlet {
                 } catch (StorageException | GeneralSecurityException | IOException e) {
                     throw new RuntimeException(e);
                 }
+                // &end[Token_Management]
             } else if (req.getSession() != null) {
                 userId = (Long) ((HttpSession) req.getSession()).getAttribute(SessionHelper.USER_ID_KEY);
             }

@@ -21,20 +21,22 @@ import java.util.Date;
 public class UserPrincipal implements Principal {
 
     private final long userId;
-    private final Date expiration;
+    private final Date expiration; // &line[Token_Expiration]
 
     public UserPrincipal(long userId, Date expiration) {
         this.userId = userId;
-        this.expiration = expiration;
+        this.expiration = expiration; // &line[Token_Expiration]
     }
 
     public Long getUserId() {
         return userId;
     }
 
+    // &begin[Token_Expiration]
     public Date getExpiration() {
         return expiration;
     }
+    // &end[Token_Expiration]
 
     @Override
     public String getName() {

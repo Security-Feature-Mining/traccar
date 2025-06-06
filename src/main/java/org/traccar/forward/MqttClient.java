@@ -39,7 +39,7 @@ public class MqttClient {
             throw new RuntimeException(e);
         }
 
-        Mqtt5SimpleAuth simpleAuth = this.getSimpleAuth(uri); // &line[MQTT_Authentication, DISCUSS] 
+        Mqtt5SimpleAuth simpleAuth = this.getSimpleAuth(uri); // &line[MQTT_Authentication]
 
         String host = uri.getHost();
         int port = uri.getPort();

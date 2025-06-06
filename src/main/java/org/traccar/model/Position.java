@@ -206,7 +206,6 @@ public class Position extends Message {
         setFixTime(time);
     }
 
-    // &begin[DISCUSS]
     private boolean outdated;
 
     @QueryIgnore
@@ -228,7 +227,6 @@ public class Position extends Message {
     public void setValid(boolean valid) {
         this.valid = valid;
     }
-    // &end[DISCUSS]
 
     private double latitude;
 

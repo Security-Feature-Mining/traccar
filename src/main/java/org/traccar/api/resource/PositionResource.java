@@ -75,7 +75,7 @@ public class PositionResource extends BaseResource {
             }
             return positions;
         } else if (deviceId > 0) {
-            permissionsService.checkPermission(Device.class, getUserId(), deviceId);
+            permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
             if (from != null && to != null) {
                 permissionsService.checkRestriction(getUserId(), UserRestrictions::getDisableReports); // &line[Permission_Check]
                 return PositionUtil.getPositions(storage, deviceId, from, to);
@@ -92,7 +92,7 @@ public class PositionResource extends BaseResource {
     public Response remove(
             @QueryParam("deviceId") long deviceId,
             @QueryParam("from") Date from, @QueryParam("to") Date to) throws StorageException {
-        permissionsService.checkPermission(Device.class, getUserId(), deviceId);
+        permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
         permissionsService.checkRestriction(getUserId(), UserRestrictions::getReadonly); // &line[Permission_Check]
 
         var conditions = new LinkedList<Condition>();
@@ -109,7 +109,7 @@ public class PositionResource extends BaseResource {
     public Response getKml(
             @QueryParam("deviceId") long deviceId,
             @QueryParam("from") Date from, @QueryParam("to") Date to) throws StorageException {
-        permissionsService.checkPermission(Device.class, getUserId(), deviceId);
+        permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
         StreamingOutput stream = output -> {
             try {
                 kmlExportProvider.generate(output, deviceId, from, to);
@@ -127,7 +127,7 @@ public class PositionResource extends BaseResource {
     public Response getCsv(
             @QueryParam("deviceId") long deviceId,
             @QueryParam("from") Date from, @QueryParam("to") Date to) throws StorageException {
-        permissionsService.checkPermission(Device.class, getUserId(), deviceId);
+        permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
         StreamingOutput stream = output -> {
             try {
                 csvExportProvider.generate(output, deviceId, from, to);

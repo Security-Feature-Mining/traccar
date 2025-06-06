@@ -40,7 +40,7 @@ public class StatisticsResource extends BaseResource {
     @GET
     public Collection<Statistics> get(
             @QueryParam("from") Date from, @QueryParam("to") Date to) throws StorageException {
-        permissionsService.checkAdmin(getUserId());
+        permissionsService.checkAdmin(getUserId()); // &line[Role_Check] 
         return storage.getObjects(Statistics.class, new Request(
                 new Columns.All(),
                 new Condition.Between("captureTime", "from", from, "to", to),

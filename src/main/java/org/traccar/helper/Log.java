@@ -49,7 +49,7 @@ public final class Log {
     }
 
     private static final String STACK_PACKAGE = "org.traccar";
-    private static final int STACK_LIMIT = 4; // &line[Log_Limit] 
+    private static final int STACK_LIMIT = 4; // &line[Log_Limit]
 
     private static class RollingFileHandler extends Handler {
 
@@ -275,7 +275,7 @@ public final class Log {
         return s.toString();
     }
 
-    // &begin[DISCUSS]
+    // &begin[Log_Limit]
     public static long[] getStorageSpace() {
         var stores = new ArrayList<Pair<Long, Long>>();
         for (FileStore store : FileSystems.getDefault().getFileStores()) {
@@ -294,6 +294,6 @@ public final class Log {
                 .mapToLong(Long::longValue)
                 .toArray();
     }
-    // &end[DISCUSS]
+    // &end[Log_Limit]
 
 }

@@ -54,7 +54,6 @@ public class PermissionsResource extends BaseResource {
             permissionsService.checkPermission(permission.getPropertyClass(), getUserId(), permission.getPropertyId());
         }
     }
-
     // &end[Permission_Check]
     // &begin[Permission_Type_Validation]
     private void checkPermissionTypes(List<LinkedHashMap<String, Long>> entities) {
@@ -67,7 +66,6 @@ public class PermissionsResource extends BaseResource {
         }
     }
     // &end[Permission_Type_Validation]
-
     // &begin[Permission_Assignment]
     @Path("bulk")
     @POST
@@ -99,7 +97,6 @@ public class PermissionsResource extends BaseResource {
         return add(Collections.singletonList(entity));
     }
     // &end[Permission_Assignment]
-
     // &begin[Permission_Invalidation]
     @DELETE
     @Path("bulk")
@@ -131,6 +128,5 @@ public class PermissionsResource extends BaseResource {
         return remove(Collections.singletonList(entity));
     }
     // &end[Permission_Invalidation]
-
 }
 // &end[Permission_Definition]

@@ -184,14 +184,14 @@ public class PermissionsService {
         if (before.getAdministrator() != after.getAdministrator() // &line[Role_Check]
                 || before.getDeviceLimit() != after.getDeviceLimit()
                 || before.getUserLimit() != after.getUserLimit()) {
-            checkAdmin(userId);
+            checkAdmin(userId); // &line[Role_Check]
         }
         User user = userId > 0 ? getUser(userId) : null;
         if (user != null && user.getExpirationTime() != null
                 && !Objects.equals(before.getExpirationTime(), after.getExpirationTime())
                 && (after.getExpirationTime() == null
                 || user.getExpirationTime().compareTo(after.getExpirationTime()) < 0)) {
-            checkAdmin(userId);
+            checkAdmin(userId); // &line[Role_Check]
         }
         if (before.getReadonly() != after.getReadonly()
                 || before.getDeviceReadonly() != after.getDeviceReadonly()
@@ -200,7 +200,7 @@ public class PermissionsService {
                 || before.getDisableReports() != after.getDisableReports()
                 || before.getFixedEmail() != after.getFixedEmail()) {
             if (userId == after.getId()) {
-                checkAdmin(userId);
+                checkAdmin(userId); // &line[Role_Check]
             } else if (after.getId() > 0) {
                 checkUser(userId, after.getId());
             } else {
@@ -208,7 +208,7 @@ public class PermissionsService {
             }
         }
         if (before.getFixedEmail() && !before.getEmail().equals(after.getEmail())) {
-            checkAdmin(userId);
+            checkAdmin(userId); // &line[Role_Check]
         }
     }
 

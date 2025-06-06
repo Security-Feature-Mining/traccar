@@ -24,21 +24,25 @@ import jakarta.servlet.http.HttpServletRequest;
 public final class SessionHelper {
 
     public static final String USER_ID_KEY = "userId";
-    public static final String EXPIRATION_KEY = "expiration"; // &line[Session_Timeout, DISCUSS] 
+    public static final String EXPIRATION_KEY = "expiration"; // &line[Session_Timeout] 
 
     private SessionHelper() {
     }
 
+    // &begin[User_Login]
     public static void userLogin(HttpServletRequest request, User user, Date expiration) {
         request.getSession().invalidate();
         request.getSession().setAttribute(USER_ID_KEY, user.getId());
 
+        // &begin[Session_Timeout]
         if (expiration != null) {
             request.getSession().setAttribute(EXPIRATION_KEY, expiration);
         }
+        // &end[Session_Timeout]
 
-        LogAction.login(user.getId(), WebHelper.retrieveRemoteAddress(request));
+        LogAction.login(user.getId(), WebHelper.retrieveRemoteAddress(request)); // &line[Action_Logging] 
     }
+    // &end[User_Login]
 
 }
 // &end[User_Session]

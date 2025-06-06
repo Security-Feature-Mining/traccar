@@ -11,6 +11,7 @@ Security_Features
 		    Ldap_Authentication
 		    Bearer_Authentication
 			Credentials
+			    Authenticate_with_Device
 			    User_Authentication
                 User_Login
                     Admin_Login
@@ -21,7 +22,6 @@ Security_Features
 			        Password_Update
 			        Password_Reset
 			        Password_Validation
-			    MQTT_Authentication
 			One_Time_Password
 			Certificate_Authentication
 			Multifactor_Authentication
@@ -31,12 +31,12 @@ Security_Features
 		Authorization
 		    Authorization_Scheme
 		    Authorization_Header
-		    Permission_Check
-		    Permission_Check_Server
-		    Permission_Assignment
-		    Permission_Definition
-		    Permission_Invalidation
-		    Permission_Management
+		    Permission
+                Permission_Check
+                Permission_Assignment
+                Permission_Definition
+                Permission_Invalidation
+                Permission_Management
 		    User_Based_Request_Authorization
 		    Security_Request_Filter
 			Access_Quota_Limitation
@@ -108,6 +108,7 @@ Security_Features
 			Output_Sanitization
 			Parameterized_Prepared_Statement
 		Retention_Control
+		    Log_Rotation
 		Secure_Storage
 		    Memory_Storage
             Database_Storage
@@ -120,7 +121,6 @@ Security_Features
         Checksum
 		Resource_Management
 		    Log_Limit
-		    Log_Rotation
 		System_State_Validation
 		    Read_Write_Lock
 		    Permission_Type_Validation
@@ -139,3 +139,8 @@ Security_Features
 		State_Synchronization
     Miscellaneous
         DISCUSS
+        Database_Authentication
+        Mail_Authentication
+        SMS_Authentication
+        Log_Formatting
+	    MQTT_Authentication

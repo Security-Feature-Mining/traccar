@@ -17,25 +17,29 @@ package org.traccar.model;
 
 import java.util.Date;
 
-// &begin[User_Check]
+// &begin[Permission_Check]
 public interface Disableable {
 
     boolean getDisabled();
 
     void setDisabled(boolean disabled);
 
+    // &begin[Token_Expiration]
     Date getExpirationTime();
 
     void setExpirationTime(Date expirationTime);
+    // &end[Token_Expiration]
 
     default void checkDisabled() throws SecurityException {
         if (getDisabled()) {
             throw new SecurityException(getClass().getSimpleName() + " is disabled");
         }
+        // &begin[Token_Expiration]
         if (getExpirationTime() != null && System.currentTimeMillis() > getExpirationTime().getTime()) {
             throw new SecurityException(getClass().getSimpleName() + " has expired");
         }
+        // &end[Token_Expiration]
     }
 
 }
-// &end[User_Check]
+// &end[Permission_Check]

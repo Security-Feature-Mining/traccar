@@ -35,12 +35,16 @@ public interface BroadcastInterface {
     default void updateCommand(boolean local, long deviceId) {
     }
 
+    // &begin[Invalidate_Object]
     default <T extends BaseModel> void invalidateObject(
             boolean local, Class<T> clazz, long id, ObjectOperation operation) throws Exception {
     }
+    // &end[Invalidate_Object]
 
+    // &begin[Permission_Invalidation]
     default <T1 extends BaseModel, T2 extends BaseModel> void invalidatePermission(
             boolean local, Class<T1> clazz1, long id1, Class<T2> clazz2, long id2, boolean link) throws Exception {
     }
+    // &end[Permission_Invalidation]
 
 }

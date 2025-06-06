@@ -18,6 +18,7 @@ package org.traccar.api.signature;
 import org.traccar.model.BaseModel;
 import org.traccar.storage.StorageName;
 
+// &begin[Key_Storage, Asymmetric_Key_Cryptography]
 @StorageName("tc_keystore")
 public class KeystoreModel extends BaseModel {
 
@@ -42,3 +43,4 @@ public class KeystoreModel extends BaseModel {
     }
 
 }
+// &end[Key_Storage, Asymmetric_Key_Cryptography]

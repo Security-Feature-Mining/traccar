@@ -243,6 +243,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
         return geocoderEnabled;
     }
 
+    // &begin[Log_Limit]
     private long[] storageSpace;
 
     @QueryIgnore
@@ -254,6 +255,7 @@ public class Server extends ExtendedModel implements UserRestrictions {
     public void setStorageSpace(long[] storageSpace) {
         this.storageSpace = storageSpace;
     }
+    // &end[Log_Limit]
 
     private boolean newServer;
 

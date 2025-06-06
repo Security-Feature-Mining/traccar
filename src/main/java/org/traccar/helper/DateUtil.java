@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
-// &begin[DISCUSS]
 public final class DateUtil {
 
     private DateUtil() {
@@ -77,4 +76,3 @@ public final class DateUtil {
     }
 
 }
-// &end[DISCUSS]

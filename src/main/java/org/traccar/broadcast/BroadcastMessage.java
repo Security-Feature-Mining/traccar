@@ -72,6 +72,7 @@ public class BroadcastMessage {
         this.commandDeviceId = commandDeviceId;
     }
 
+    // &begin[Invalidate_Object]
     public static class InvalidateObject {
 
         private String clazz;
@@ -115,7 +116,9 @@ public class BroadcastMessage {
     public void setInvalidateObject(InvalidateObject invalidateObject) {
         this.invalidateObject = invalidateObject;
     }
+    // &end[Invalidate_Object]
 
+    // &begin[Permission_Invalidation]
     public static class InvalidatePermission {
 
         private String clazz1;
@@ -179,5 +182,6 @@ public class BroadcastMessage {
     public void setInvalidatePermission(InvalidatePermission invalidatePermission) {
         this.invalidatePermission = invalidatePermission;
     }
+    // &end[Permission_Invalidation]
 
 }

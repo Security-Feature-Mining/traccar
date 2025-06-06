@@ -26,6 +26,7 @@ import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import java.io.IOException;
 
+// &begin[Authorization_Header]
 @Singleton
 public class CorsResponseFilter implements ContainerResponseFilter {
 
@@ -65,3 +66,4 @@ public class CorsResponseFilter implements ContainerResponseFilter {
     }
 
 }
+// &end[Authorization_Header]

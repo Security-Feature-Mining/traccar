@@ -99,7 +99,8 @@ public class NotificatorTraccar extends Notificator {
             message.tokens = user.getString("notificationTokens").split("[, ]");
             message.notification = item;
 
-            var request = client.target(url).request().header("Authorization", "key=" + key); // &line[Authorization_Header, DISCUSS]
+            // &begin[Authorization_Header]
+            var request = client.target(url).request().header("Authorization", "key=" + key);
             try (Response result = request.post(Entity.json(message))) {
                 var json = result.readEntity(JsonObject.class);
                 List<String> failedTokens = new LinkedList<>();
@@ -131,6 +132,7 @@ public class NotificatorTraccar extends Notificator {
             } catch (Exception e) {
                 LOGGER.warn("Push error", e);
             }
+            // &end[Authorization_Header]
         }
     }
 

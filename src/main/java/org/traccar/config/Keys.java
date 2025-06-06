@@ -69,6 +69,7 @@ public final class Keys {
             ".timeout",
             List.of(KeyType.CONFIG));
 
+// &begin[DISCUSS]
     /**
      * Device password. Commonly used in some protocol for sending commands.
      */
@@ -82,6 +83,7 @@ public final class Keys {
     public static final ConfigSuffix<String> PROTOCOL_DEVICE_PASSWORD = new StringConfigSuffix(
             ".devicePassword",
             List.of(KeyType.CONFIG));
+// &end[DISCUSS]
 
     /**
      * Default protocol mask to use. Currently used only by Skypatrol protocol.
@@ -262,6 +264,7 @@ public final class Keys {
             "decoder.timezone",
             List.of(KeyType.CONFIG, KeyType.DEVICE));
 
+// &begin[Authenticate_with_Device]
     /**
      * ORBCOMM API access id.
      */
@@ -275,6 +278,7 @@ public final class Keys {
     public static final ConfigKey<String> ORBCOMM_PASSWORD = new StringConfigKey(
             "orbcomm.password",
             List.of(KeyType.CONFIG));
+// &end[Authenticate_with_Device]
 
     /**
      * Use alternative format for the protocol of commands.
@@ -349,12 +353,14 @@ public final class Keys {
             List.of(KeyType.SERVER, KeyType.DEVICE),
             0.0);
 
+// &begin[Permission_Check]
     /**
      * Disable device sharing on the server.
      */
     public static final ConfigKey<Boolean> DEVICE_SHARE_DISABLE = new BooleanConfigKey(
             "disableShare",
             List.of(KeyType.SERVER));
+// &end[Permission_Check]
 
     /**
      * Speed limit threshold multiplier. For example, if the speed limit is 100, but we only want to generate an event
@@ -426,12 +432,14 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             25.0);
 
+// &begin[Memory_Storage]
     /**
      * Enable in-memory database instead of an SQL database.
      */
     public static final ConfigKey<Boolean> DATABASE_MEMORY = new BooleanConfigKey(
             "database.memory",
             List.of(KeyType.CONFIG));
+// &end[Memory_Storage]
 
     /**
      * Path to the database driver JAR file. Traccar includes drivers for MySQL, PostgreSQL and H2 databases. If you use
@@ -455,6 +463,7 @@ public final class Keys {
             "database.url",
             List.of(KeyType.CONFIG));
 
+// &begin[Authenticate_with_Database]
     /**
      * Database user name. Default administrator user for H2 database is 'sa'.
      */
@@ -468,6 +477,7 @@ public final class Keys {
     public static final ConfigKey<String> DATABASE_PASSWORD = new StringConfigKey(
             "database.password",
             List.of(KeyType.CONFIG));
+// &end[Authenticate_with_Database]
 
     /**
      * Path to Liquibase master changelog file.
@@ -500,12 +510,14 @@ public final class Keys {
             "database.saveOriginal",
             List.of(KeyType.CONFIG));
 
+// &begin[Throttling_Filter]
     /**
      * Throttle unknown device database queries when it sends repeated requests.
      */
     public static final ConfigKey<Boolean> DATABASE_THROTTLE_UNKNOWN = new BooleanConfigKey(
             "database.throttleUnknown",
             List.of(KeyType.CONFIG));
+// &end[Throttling_Filter]
 
     /**
      * Automatically register unknown devices in the database.
@@ -550,13 +562,16 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             -1);
 
+// &begin[Token_Expiration]
     /**
      * Default user expiration for self registered users. Value is in days. By default no expiration is set.
      */
     public static final ConfigKey<Integer> USERS_DEFAULT_EXPIRATION_DAYS = new IntegerConfigKey(
             "users.defaultExpirationDays",
             List.of(KeyType.CONFIG));
+// &end[Token_Expiration]
 
+// &begin[Ldap_Authentication]
     /**
      * LDAP server URL. For more info check <a href="https://www.traccar.org/ldap/">LDAP config</a>.
      */
@@ -564,6 +579,7 @@ public final class Keys {
             "ldap.url",
             List.of(KeyType.CONFIG));
 
+    // &begin[User_Authentication]
     /**
      * LDAP server login.
      */
@@ -577,6 +593,7 @@ public final class Keys {
     public static final ConfigKey<String> LDAP_PASSWORD = new StringConfigKey(
             "ldap.password",
             List.of(KeyType.CONFIG));
+    // &end[User_Authentication]
 
     /**
      * Force LDAP authentication.
@@ -636,7 +653,9 @@ public final class Keys {
     public static final ConfigKey<String> LDAP_ADMIN_GROUP = new StringConfigKey(
             "ldap.adminGroup",
             List.of(KeyType.CONFIG));
+// &end[Ldap_Authentication]
 
+// &begin[OpenID_Authentication]
     /**
      * Force OpenID Connect authentication. When enabled, the Traccar login page will be skipped
      * and users are redirected to the OpenID Connect provider.
@@ -706,6 +725,7 @@ public final class Keys {
             "openid.groupsClaimName",
             List.of(KeyType.CONFIG),
             "groups");
+// &end[OpenID_Authentication]
 
 // &begin[Permission_Definition]
     /**
@@ -772,6 +792,7 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             8082);
 
+// &begin[Throttling_Filter]
     /**
      * Maximum API requests per second. Above this limit requests and delayed and throttled.
      */
@@ -786,6 +807,7 @@ public final class Keys {
             "web.maxRequestSec",
             List.of(KeyType.CONFIG),
             600);
+// &end[Throttling_Filter]
 
     /**
      * Path to the web app folder.
@@ -811,12 +833,14 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             300000L);
 
+// &begin[Session_Timeout]
     /**
      * Authentication sessions timeout in seconds. By default no timeout.
      */
     public static final ConfigKey<Integer> WEB_SESSION_TIMEOUT = new IntegerConfigKey(
             "web.sessionTimeout",
             List.of(KeyType.CONFIG));
+// &end[Session_Timeout]
 
     /**
      * Enable database access console via '/console' URL. Use only for debugging. Never use in production.
@@ -856,6 +880,7 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             "max-age=3600,public");
 
+// &begin[TOTP_Authentication]
     /**
      * Enable TOTP authentication on the server.
      */
@@ -869,6 +894,7 @@ public final class Keys {
     public static final ConfigKey<Boolean> WEB_TOTP_FORCE = new BooleanConfigKey(
             "totpForce",
             List.of(KeyType.SERVER));
+// &end[TOTP_Authentication]
 
     /**
      * Host for raw data forwarding.
@@ -1046,6 +1072,7 @@ public final class Keys {
             List.of(KeyType.CONFIG, KeyType.USER),
             "smtp");
 
+// &begin[Secure_Communication]
     /**
      * If true, enables the use of the STARTTLS command (if supported by the server) to switch the connection to a
      * TLS-protected connection before issuing any login commands.
@@ -1083,7 +1110,9 @@ public final class Keys {
     public static final ConfigKey<String> MAIL_SMTP_SSL_PROTOCOLS = new StringConfigKey(
             "mail.smtp.ssl.protocols",
             List.of(KeyType.CONFIG, KeyType.USER));
+// &end[Secure_Communication]
 
+// &begin[Mail_Authentication]
     /**
      * SMTP connection username.
      */
@@ -1097,6 +1126,7 @@ public final class Keys {
     public static final ConfigKey<String> MAIL_SMTP_PASSWORD = new StringConfigKey(
             "mail.smtp.password",
             List.of(KeyType.CONFIG, KeyType.USER));
+// &end[Mail_Authentication]
 
     /**
      * Email address to use for SMTP MAIL command.
@@ -1134,6 +1164,7 @@ public final class Keys {
             "sms.http.authorization",
             List.of(KeyType.CONFIG));
 
+// &begin[SMS_Authentication]
     /**
      * SMS API basic authentication user.
      */
@@ -1147,6 +1178,7 @@ public final class Keys {
     public static final ConfigKey<String> SMS_HTTP_PASSWORD = new StringConfigKey(
             "sms.http.password",
             List.of(KeyType.CONFIG));
+// &end[SMS_Authentication]
 
     /**
      * SMS API body template. Placeholders {phone} and {message} can be used in the template.
@@ -1245,6 +1277,7 @@ public final class Keys {
             "notificator.telegram.sendLocation",
             List.of(KeyType.CONFIG));
 
+// &begin[Token_Expiration]
     /**
      * Enable user expiration email notification.
      */
@@ -1272,6 +1305,7 @@ public final class Keys {
     public static final ConfigKey<Long> NOTIFICATION_EXPIRATION_DEVICE_REMINDER = new LongConfigKey(
             "notification.expiration.device.reminder",
             List.of(KeyType.CONFIG));
+// &end[Token_Expiration]
 
     /**
      * Block notifications for specific users. The value should be a comma-separated list of internal user ids.
@@ -1497,12 +1531,14 @@ public final class Keys {
             List.of(KeyType.CONFIG, KeyType.DEVICE),
             "");
 
+// &begin[Server_Time]
     /**
      * Override device time. Possible values are 'deviceTime' and 'serverTime'
      */
     public static final ConfigKey<String> TIME_OVERRIDE = new StringConfigKey(
             "time.override",
             List.of(KeyType.CONFIG));
+// &end[Server_Time]
 
     /**
      * List of protocols to enable. If not specified, Traccar enabled all protocols that have port numbers listed.
@@ -1513,6 +1549,7 @@ public final class Keys {
             "protocols.enable",
             List.of(KeyType.CONFIG));
 
+// &begin[Server_Time]
     /**
      * List of protocols for overriding time. If not specified override is applied globally. List consist of protocol
      * names that can be separated by comma or single space character.
@@ -1520,6 +1557,7 @@ public final class Keys {
     public static final ConfigKey<String> TIME_PROTOCOLS = new StringConfigKey(
             "time.protocols",
             List.of(KeyType.CONFIG));
+// &end[Server_Time]
 
     /**
      * Replaces coordinates with last known if change is less than a 'coordinates.minError' meters
@@ -1816,12 +1854,14 @@ public final class Keys {
             "web.requestLog.path",
             List.of(KeyType.CONFIG));
 
+// &begin[Log_Rotation]
     /**
      * Set the number of days before rotated request log files are deleted.
      */
     public static final ConfigKey<Integer> WEB_REQUEST_LOG_RETAIN_DAYS = new IntegerConfigKey(
             "web.requestLog.retainDays",
             List.of(KeyType.CONFIG));
+// &end[Log_Rotation]
 
     /**
      * Disable systemd health checks.
@@ -1839,6 +1879,7 @@ public final class Keys {
             "web.healthCheck.dropThreshold",
             List.of(KeyType.CONFIG));
 
+// &begin[Cookie_Same_Site]
     /**
      * Sets SameSite cookie attribute value.
      * Supported options: Lax, Strict, None.
@@ -1846,6 +1887,7 @@ public final class Keys {
     public static final ConfigKey<String> WEB_SAME_SITE_COOKIE = new StringConfigKey(
             "web.sameSiteCookie",
             List.of(KeyType.CONFIG));
+// &end[Cookie_Same_Site]
 
     /**
      * Enables persisting Jetty session to the database
@@ -1854,6 +1896,7 @@ public final class Keys {
             "web.persistSession",
             List.of(KeyType.CONFIG));
 
+// &begin[OpenID_Authentication]
     /**
      * Public URL for the web app. Used for notification, report link and OpenID Connect.
      * If not provided, Traccar will attempt to get a URL from the server IP address, but it might be a local address.
@@ -1861,6 +1904,7 @@ public final class Keys {
     public static final ConfigKey<String> WEB_URL = new StringConfigKey(
             "web.url",
             List.of(KeyType.CONFIG));
+// &end[OpenID_Authentication]
 
     /**
      * Show logs from unknown devices.
@@ -1869,6 +1913,7 @@ public final class Keys {
             "web.showUnknownDevices",
             List.of(KeyType.CONFIG));
 
+// &begin[Permission_Definition]
     /**
      * Enable commands for a shared device.
      */
@@ -1882,6 +1927,7 @@ public final class Keys {
     public static final ConfigKey<Boolean> WEB_SHARE_DEVICE_REPORTS = new BooleanConfigKey(
             "web.shareDevice.reports",
             List.of(KeyType.CONFIG));
+// &end[Permission_Definition]
 
     /**
      * Output logging to the standard terminal output instead of a log file.
@@ -1890,13 +1936,16 @@ public final class Keys {
             "logger.console",
             List.of(KeyType.CONFIG));
 
+// &begin[Access_Logging]
     /**
      * Log executed SQL queries.
      */
     public static final ConfigKey<Boolean> LOGGER_QUERIES = new BooleanConfigKey(
             "logger.queries",
             List.of(KeyType.CONFIG));
+// &end[Access_Logging]
 
+// &begin[Log_Rotation]
     /**
      * Log file name. For rotating logs, a date is added at the end of the file name for non-current logs.
      */
@@ -1904,6 +1953,7 @@ public final class Keys {
             "logger.file",
             List.of(KeyType.CONFIG),
             "./logs/tracker-server.log");
+// &end[Log_Rotation]
 
     /**
      * Logging level. Default value is 'info'.
@@ -1921,6 +1971,7 @@ public final class Keys {
             "logger.fullStackTraces",
             List.of(KeyType.CONFIG));
 
+// &begin[Log_Rotation]
     /**
      * Create a new log file daily. Helps with log management. For example, downloading and cleaning logs. Enabled by
      * default.
@@ -1929,6 +1980,7 @@ public final class Keys {
             "logger.rotate",
             List.of(KeyType.CONFIG),
             true);
+// &end[Log_Rotation]
 
     /**
      * If all bytes are printable characters, log network data as text instead of HEX.
@@ -1938,6 +1990,7 @@ public final class Keys {
             List.of(KeyType.CONFIG),
             true);
 
+// &begin[Log_Rotation]
     /**
      * Log file rotation interval, the default rotation interval is once a day.
      * This option is ignored if 'logger.rotate' = false
@@ -1947,6 +2000,7 @@ public final class Keys {
             "logger.rotate.interval",
             List.of(KeyType.CONFIG),
             "day");
+// &end[Log_Rotation]
 
     /**
      * A list of position attributes to log.

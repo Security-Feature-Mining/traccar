@@ -25,6 +25,6 @@ public class ServiceAccountUser extends User {
         setId(ID);
         setName("Service Account");
         setEmail("none");
-        setAdministrator(true);
+        setAdministrator(true); // &line[Role_Assignment] 
     }
 }

@@ -68,7 +68,7 @@ public class LdapProvider {
             }
         }
         serviceUser = config.getString(Keys.LDAP_USER);
-        servicePassword = config.getString(Keys.LDAP_PASSWORD); // &line[DISCUSS] 
+        servicePassword = config.getString(Keys.LDAP_PASSWORD);
     }
 
     private InitialDirContext auth(String accountName, String password) throws NamingException {

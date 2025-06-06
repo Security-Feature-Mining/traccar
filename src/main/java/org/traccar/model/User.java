@@ -151,7 +151,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         this.coordinateFormat = coordinateFormat;
     }
 
-    // &begin[User_Check]
+    // &begin[Permission_Check]
     private boolean disabled;
 
     @Override
@@ -163,7 +163,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
-    // &end[User_Check]
+    // &end[Permission_Check]
 
     // &begin[Token_Expiration]
     private Date expirationTime;
