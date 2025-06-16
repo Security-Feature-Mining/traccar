@@ -52,12 +52,14 @@ public final class Keys {
             ".interval",
             List.of(KeyType.CONFIG));
 
+    // &begin[Secure_Communication]
     /**
      * Enable SSL support for the protocol. Not all protocols support this.
      */
     public static final ConfigSuffix<Boolean> PROTOCOL_SSL = new BooleanConfigSuffix(
             ".ssl",
             List.of(KeyType.CONFIG));
+    // &end[Secure_Communication]
 
     /**
      * Connection timeout value in seconds. Because sometimes there is no way to detect lost TCP connection old
@@ -69,7 +71,7 @@ public final class Keys {
             ".timeout",
             List.of(KeyType.CONFIG));
 
-// &begin[DISCUSS]
+// &begin[Authenticate_with_Device]
     /**
      * Device password. Commonly used in some protocol for sending commands.
      */
@@ -83,7 +85,7 @@ public final class Keys {
     public static final ConfigSuffix<String> PROTOCOL_DEVICE_PASSWORD = new StringConfigSuffix(
             ".devicePassword",
             List.of(KeyType.CONFIG));
-// &end[DISCUSS]
+// &end[Authenticate_with_Device]
 
     /**
      * Default protocol mask to use. Currently used only by Skypatrol protocol.

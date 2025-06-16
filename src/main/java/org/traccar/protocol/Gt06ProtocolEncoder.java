@@ -70,8 +70,10 @@ public class Gt06ProtocolEncoder extends BaseProtocolEncoder {
         boolean alternative = AttributeUtil.lookup(
                 getCacheManager(), Keys.PROTOCOL_ALTERNATIVE.withPrefix(getProtocolName()), command.getDeviceId());
 
+        // &begin[Credentials::Authenticate_with_Device]
         String password = AttributeUtil.getDevicePassword(
                 getCacheManager(), command.getDeviceId(), getProtocolName(), "123456");
+        // &end[Credentials::Authenticate_with_Device]
 
         String model = getDeviceModel(command.getDeviceId());
 

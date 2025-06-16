@@ -62,6 +62,7 @@ public abstract class BaseProtocolEncoder extends ChannelOutboundHandlerAdapter 
         return cacheManager.getObject(Device.class, deviceId).getUniqueId();
     }
 
+    // &begin[Credentials::Authenticate_with_Device]
     protected void initDevicePassword(Command command, String defaultPassword) {
         if (!command.hasAttribute(Command.KEY_DEVICE_PASSWORD)) {
             String password = AttributeUtil.getDevicePassword(
@@ -69,6 +70,7 @@ public abstract class BaseProtocolEncoder extends ChannelOutboundHandlerAdapter 
             command.set(Command.KEY_DEVICE_PASSWORD, password);
         }
     }
+    // &end[Credentials::Authenticate_with_Device]
 
     public void setModelOverride(String modelOverride) {
         this.modelOverride = modelOverride;

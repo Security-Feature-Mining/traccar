@@ -10,6 +10,9 @@ Security_Features
                 Token_Management
 		    Ldap_Authentication
 		    Bearer_Authentication
+            Mail_Authentication
+            SMS_Authentication
+            MQTT_Authentication
 			Credentials
 			    Authenticate_with_Device
 			    User_Authentication
@@ -137,10 +140,3 @@ Security_Features
 			    Cookie_Http_only
 			Session_Timeout
 		State_Synchronization
-    Miscellaneous
-        DISCUSS
-        Database_Authentication
-        Mail_Authentication
-        SMS_Authentication
-        Log_Formatting
-	    MQTT_Authentication
