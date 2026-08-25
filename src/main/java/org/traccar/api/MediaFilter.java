@@ -64,16 +64,14 @@ public class MediaFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         try {
             HttpSession session = ((HttpServletRequest) request).getSession(false); // &line[User_Session]
-            Long userId = null; // &line[User]
+            Long userId = null;
             if (session != null) { // &line[User_Session]
-                // &begin[User]
                 userId = (Long) session.getAttribute(SessionHelper.USER_ID_KEY); // &line[User_Session]
                 if (userId != null) {
                     statisticsManager.registerRequest(userId); // &line[Access_Logging] 
                 }
             }
             if (userId == null) {
-                // &end[User]
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

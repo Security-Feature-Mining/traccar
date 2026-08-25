@@ -36,14 +36,14 @@ public class HttpSmsClient implements SmsManager {
     private final Client client;
     private final String url;
     private final String authorizationHeader; // &line[Authorization_Header] 
-    private final String authorization; // &line[Credentials::Authenticate_with_Device] 
+    private final String authorization; // &line[Authenticate_with_Device]
     private final String template;
     private final MediaType mediaType;
 
     public HttpSmsClient(Config config, Client client) {
         this.client = client;
         url = config.getString(Keys.SMS_HTTP_URL);
-        // &begin[Credentials::Authenticate_with_Device]
+        // &begin[Authenticate_with_Device]
         authorizationHeader = config.getString(Keys.SMS_HTTP_AUTHORIZATION_HEADER); // &line[Authorization_Header] 
         if (config.hasKey(Keys.SMS_HTTP_AUTHORIZATION)) {
             authorization = config.getString(Keys.SMS_HTTP_AUTHORIZATION);
@@ -57,7 +57,7 @@ public class HttpSmsClient implements SmsManager {
                 authorization = null;
             }
         }
-        // &end[Credentials::Authenticate_with_Device]
+        // &end[Authenticate_with_Device]
         template = config.getString(Keys.SMS_HTTP_TEMPLATE).trim();
         if (template.charAt(0) == '<') {
             mediaType = MediaType.APPLICATION_XML_TYPE;
@@ -90,11 +90,11 @@ public class HttpSmsClient implements SmsManager {
 
     private Invocation.Builder getRequestBuilder() {
         Invocation.Builder builder = client.target(url).request();
-        // &begin[Credentials::Authenticate_with_Device]
+        // &begin[Authenticate_with_Device]
         if (authorization != null) {
             builder = builder.header(authorizationHeader, authorization); // &line[Authorization_Header] 
         }
-        // &end[Credentials::Authenticate_with_Device]
+        // &end[Authenticate_with_Device]
         return builder;
     }
 

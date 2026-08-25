@@ -37,19 +37,15 @@ public class TokenManager {
     private final CryptoManager cryptoManager;
 
     public static class TokenData {
-        // &begin[User]
         @JsonProperty("u")
         private long userId;
-        // &end[User]
         // &begin[Token_Expiration]
         @JsonProperty("e")
         private Date expiration;
         // &end[Token_Expiration]
-        // &begin[User]
         public long getUserId() {
             return userId;
         }
-        // &end[User]
         // &begin[Token_Expiration]
         public Date getExpiration() {
             return expiration;

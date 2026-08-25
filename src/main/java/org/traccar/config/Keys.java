@@ -465,7 +465,7 @@ public final class Keys {
             "database.url",
             List.of(KeyType.CONFIG));
 
-// &begin[Authenticate_with_Database]
+// &begin[User_Authentication]
     /**
      * Database user name. Default administrator user for H2 database is 'sa'.
      */
@@ -479,7 +479,7 @@ public final class Keys {
     public static final ConfigKey<String> DATABASE_PASSWORD = new StringConfigKey(
             "database.password",
             List.of(KeyType.CONFIG));
-// &end[Authenticate_with_Database]
+// &end[User_Authentication]
 
     /**
      * Path to Liquibase master changelog file.

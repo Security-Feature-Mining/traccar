@@ -34,7 +34,6 @@ public class BaseResource {
     @Inject
     protected PermissionsService permissionsService; // &line[Permission_Management]
 
-    // &begin[User]
     protected long getUserId() {
         UserPrincipal principal = (UserPrincipal) securityContext.getUserPrincipal();
         if (principal != null) {
@@ -42,6 +41,5 @@ public class BaseResource {
         }
         return 0;
     }
-    // &end[User]
 
 }
