@@ -35,7 +35,7 @@ public class BaseResource {
     protected PermissionsService permissionsService; // &line[Permission_Management]
 
     protected long getUserId() {
-        UserPrincipal principal = (UserPrincipal) securityContext.getUserPrincipal();
+        UserPrincipal principal = (UserPrincipal) securityContext.getUserPrincipal();  // &line[Authentication_Scheme]
         if (principal != null) {
             return principal.getUserId();
         }

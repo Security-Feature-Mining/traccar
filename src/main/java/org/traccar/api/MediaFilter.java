@@ -45,15 +45,15 @@ public class MediaFilter implements Filter {
 
     private final Storage storage;
     private final StatisticsManager statisticsManager;
-    private final Provider<PermissionsService> permissionsServiceProvider;
+    private final Provider<PermissionsService> permissionsServiceProvider; // &line[Permission]
 
     @Inject
     public MediaFilter(
             Storage storage, StatisticsManager statisticsManager,
-            Provider<PermissionsService> permissionsServiceProvider) {
+            Provider<PermissionsService> permissionsServiceProvider) { // &line[Permission]
         this.storage = storage;
         this.statisticsManager = statisticsManager;
-        this.permissionsServiceProvider = permissionsServiceProvider;
+        this.permissionsServiceProvider = permissionsServiceProvider; // &line[Permission]
     }
 
     @Override

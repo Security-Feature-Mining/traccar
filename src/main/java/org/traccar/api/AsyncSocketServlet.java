@@ -42,17 +42,17 @@ public class AsyncSocketServlet extends JettyWebSocketServlet {
     private final ObjectMapper objectMapper;
     private final ConnectionManager connectionManager;
     private final Storage storage;
-    private final LoginService loginService;
+    private final LoginService loginService; // &line[User_Login]
 
     @Inject
     public AsyncSocketServlet(
             Config config, ObjectMapper objectMapper, ConnectionManager connectionManager, Storage storage,
-            LoginService loginService) {
+            LoginService loginService) { // &line[User_Login]
         this.config = config;
         this.objectMapper = objectMapper;
         this.connectionManager = connectionManager;
         this.storage = storage;
-        this.loginService = loginService;
+        this.loginService = loginService; // &line[User_Login]
     }
 
     @Override
@@ -65,13 +65,13 @@ public class AsyncSocketServlet extends JettyWebSocketServlet {
             if (tokens != null && !tokens.isEmpty()) {
                 String token = tokens.iterator().next();
                 try {
-                    userId = loginService.login(token).getUser().getId();
+                    userId = loginService.login(token).getUser().getId(); // &line[User_Login] 
                 } catch (StorageException | GeneralSecurityException | IOException e) {
                     throw new RuntimeException(e);
                 }
                 // &end[Token_Management]
             } else if (req.getSession() != null) {
-                userId = (Long) ((HttpSession) req.getSession()).getAttribute(SessionHelper.USER_ID_KEY);
+                userId = (Long) ((HttpSession) req.getSession()).getAttribute(SessionHelper.USER_ID_KEY); // &line[User_Management]
             }
             if (userId != null) {
                 return new AsyncSocket(objectMapper, connectionManager, storage, userId);

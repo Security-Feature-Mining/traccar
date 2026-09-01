@@ -69,17 +69,17 @@ public class ReportUtils {
 
     private final Config config;
     private final Storage storage;
-    private final PermissionsService permissionsService;
+    private final PermissionsService permissionsService; // &line[Permission]
     private final VelocityEngine velocityEngine;
     private final Geocoder geocoder;
 
     @Inject
     public ReportUtils(
-            Config config, Storage storage, PermissionsService permissionsService,
+            Config config, Storage storage, PermissionsService permissionsService, // &line[Permission]
             VelocityEngine velocityEngine, @Nullable Geocoder geocoder) {
         this.config = config;
         this.storage = storage;
-        this.permissionsService = permissionsService;
+        this.permissionsService = permissionsService; // &line[Permission]
         this.velocityEngine = velocityEngine;
         this.geocoder = geocoder;
     }
@@ -131,8 +131,8 @@ public class ReportUtils {
     }
 
     public org.jxls.common.Context initializeContext(long userId) throws StorageException {
-        var server = permissionsService.getServer();
-        var user = permissionsService.getUser(userId);
+        var server = permissionsService.getServer(); // &line[Permission]
+        var user = permissionsService.getUser(userId); // &line[Permission]
         var context = PoiTransformer.createInitialContext();
         context.putVar("distanceUnit", UserUtil.getDistanceUnit(server, user));
         context.putVar("speedUnit", UserUtil.getSpeedUnit(server, user));
@@ -301,7 +301,7 @@ public class ReportUtils {
 
         List<T> result = new ArrayList<>();
         TripsConfig tripsConfig = new TripsConfig(
-                new AttributeUtil.StorageProvider(config, storage, permissionsService, device));
+                new AttributeUtil.StorageProvider(config, storage, permissionsService, device)); // &line[Permission] 
         boolean ignoreOdometer = config.getBoolean(Keys.REPORT_IGNORE_ODOMETER);
 
         var positions = PositionUtil.getPositions(storage, device.getId(), from, to);

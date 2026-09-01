@@ -18,6 +18,7 @@ package org.traccar.api.security;
 import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
+// &begin[User_Management]
 public class UserSecurityContext implements SecurityContext {
 
     private final UserPrincipal principal;
@@ -43,10 +44,11 @@ public class UserSecurityContext implements SecurityContext {
         return false;
     }
 
+    // &begin[Basic_Authentication]
     @Override
-            // &begin[Basic_Authentication]
     public String getAuthenticationScheme() {
         return BASIC_AUTH;
     }
 // &end[Basic_Authentication]
 }
+// &end[User_Management]

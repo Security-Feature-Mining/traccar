@@ -94,7 +94,7 @@ public class SatsolProtocolDecoder extends BaseProtocolDecoder {
             response.writeIntLE((int) id);
             response.writeShortLE(0);
             response.setShortLE(0, Checksum.crc16( // &line[Checksum]
-                    Checksum.CRC16_CCITT_FALSE, response.nioBuffer(2, response.readableBytes() - 2)));
+                    Checksum.CRC16_CCITT_FALSE, response.nioBuffer(2, response.readableBytes() - 2))); // &line[Checksum]
             channel.writeAndFlush(new NetworkMessage(response, remoteAddress));
         }
 

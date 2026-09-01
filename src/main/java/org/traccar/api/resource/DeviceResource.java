@@ -102,14 +102,14 @@ public class DeviceResource extends BaseObjectResource<Device> {
                         new Columns.All(),
                         new Condition.And(
                                 new Condition.Equals("uniqueId", uniqueId),
-                                new Condition.Permission(User.class, getUserId(), Device.class)))));
+                                new Condition.Permission(User.class, getUserId(), Device.class))))); // &line[Permission]
             }
             for (Long deviceId : deviceIds) {
                 result.addAll(storage.getObjects(Device.class, new Request(
                         new Columns.All(),
                         new Condition.And(
                                 new Condition.Equals("id", deviceId),
-                                new Condition.Permission(User.class, getUserId(), Device.class)))));
+                                new Condition.Permission(User.class, getUserId(), Device.class))))); // &line[Permission]
             }
             return result;
 
@@ -119,14 +119,14 @@ public class DeviceResource extends BaseObjectResource<Device> {
 
             if (all) {
                 if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check]
-                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
+                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[Permission]
                 }
             } else {
                 if (userId == 0) {
-                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
+                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[Permission]
                 } else {
                     permissionsService.checkUser(getUserId(), userId); // &line[Permission_Check]
-                    conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups());
+                    conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[Permission]
                 }
             }
 
@@ -226,9 +226,9 @@ public class DeviceResource extends BaseObjectResource<Device> {
     @POST
     public String shareDevice(
             @FormParam("deviceId") long deviceId,
-            @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException {
+            @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException] 
 
-        User user = permissionsService.getUser(getUserId());
+        User user = permissionsService.getUser(getUserId()); // &line[Permission] 
         // &begin[Permission_Check]
         if (permissionsService.getServer().getBoolean(Keys.DEVICE_SHARE_DISABLE.getKey())) {
             throw new SecurityException("Sharing is disabled");

@@ -69,8 +69,10 @@ public class UserResource extends BaseObjectResource<User> {
             @QueryParam("userId") long userId, @QueryParam("deviceId") long deviceId) throws StorageException {
         var conditions = new LinkedList<Condition>();
         if (userId > 0) {
+            // &begin[Permission_Check]
             permissionsService.checkUser(getUserId(), userId);
             conditions.add(new Condition.Permission(User.class, userId, ManagedUser.class).excludeGroups());
+            // &end[Permission_Check]
             // &begin[Role_Check]
         } else if (permissionsService.notAdmin(getUserId())) {
             conditions.add(new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups());
@@ -88,7 +90,7 @@ public class UserResource extends BaseObjectResource<User> {
     @PermitAll
     @POST
     public Response add(User entity) throws StorageException {
-        User currentUser = getUserId() > 0 ? permissionsService.getUser(getUserId()) : null;
+        User currentUser = getUserId() > 0 ? permissionsService.getUser(getUserId()) : null; // &line[Permission]
         if (currentUser == null || !currentUser.getAdministrator()) {  // &line[Role_Check]
             permissionsService.checkUserUpdate(getUserId(), new User(), entity); // &line[Permission_Check]
             if (currentUser != null && currentUser.getUserLimit() != 0) {

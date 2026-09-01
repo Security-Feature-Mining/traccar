@@ -147,13 +147,13 @@ public final class AttributeUtil {
 
         private final Config config;
         private final Storage storage;
-        private final PermissionsService permissionsService;
+        private final PermissionsService permissionsService; // &line[Permission]
         private final Device device;
 
-        public StorageProvider(Config config, Storage storage, PermissionsService permissionsService, Device device) {
+        public StorageProvider(Config config, Storage storage, PermissionsService permissionsService, Device device) { // &line[Permission]
             this.config = config;
             this.storage = storage;
-            this.permissionsService = permissionsService;
+            this.permissionsService = permissionsService; // &line[Permission]
             this.device = device;
         }
 
@@ -175,7 +175,7 @@ public final class AttributeUtil {
         @Override
         public Server getServer() {
             try {
-                return permissionsService.getServer();
+                return permissionsService.getServer(); // &line[Permission]
             } catch (StorageException e) {
                 throw new RuntimeException(e);
             }

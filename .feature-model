@@ -1,6 +1,7 @@
 Security_Features
     Access_Control
 		Authentication
+		    User_Management
 		    Authentication_Scheme
 		        Basic_Authentication
 		    Token_Authentication
@@ -122,6 +123,7 @@ Security_Features
 			    Secure_Random
     System_State_Protection
         Checksum
+        SecurityException
 		Resource_Management
 		    Log_Limit
 		System_State_Validation
