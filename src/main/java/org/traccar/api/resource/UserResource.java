@@ -125,7 +125,7 @@ public class UserResource extends BaseObjectResource<User> {
                 new Columns.Include("hashedPassword", "salt"), // &line[Salting]
                 new Condition.Equals("id", entity.getId())));
 
-        LogAction.create(getUserId(), entity); // &line[Action_Logging]
+        LogAction.create(getUserId(), entity);
 
         if (currentUser != null && currentUser.getUserLimit() != 0) {
             storage.addPermission(new Permission(User.class, getUserId(), ManagedUser.class, entity.getId())); // &line[Permission_Assignment]

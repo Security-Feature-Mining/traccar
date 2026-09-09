@@ -101,8 +101,8 @@ Security_Features
             Certification
             Message_Authentication
                 ECDSA_Signature_Verification
-                Message_Signing
                 ECDSA_Signature_Signing
+                Message_Signing
             Digital_Watermarking
         Steganography
     Security_Monitoring
@@ -110,7 +110,6 @@ Security_Features
             Authentication_Logging
             Permission_Logging
             Access_Logging
-            Action_Logging
             Permission_Change_Logging
         Automated_Response
         History_Maintenance
@@ -157,4 +156,3 @@ Security_Features
                 Cookie_Http_only
             Session_Timeout
         State_Synchronization
-            Read_Write_Lock

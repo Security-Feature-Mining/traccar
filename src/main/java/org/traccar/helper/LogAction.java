@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.traccar.model.BaseModel;
 
-// &begin[Action_Logging]
 public final class LogAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogAction.class);
@@ -143,4 +142,3 @@ public final class LogAction {
     // &end[Authentication_Logging]
 
 }
-// &end[Action_Logging]

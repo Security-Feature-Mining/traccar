@@ -112,7 +112,7 @@ public class ServerResource extends BaseResource {
                 new Columns.Exclude("id"),
                 new Condition.Equals("id", server.getId())));
         cacheManager.invalidateObject(true, Server.class, server.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object]
-        LogAction.edit(getUserId(), server); // &line[Action_Logging]
+        LogAction.edit(getUserId(), server);
         return Response.ok(server).build();
     }
 

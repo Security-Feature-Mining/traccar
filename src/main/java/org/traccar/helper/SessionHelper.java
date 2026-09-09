@@ -40,7 +40,7 @@ public final class SessionHelper {
         }
         // &end[Session_Timeout]
 
-        LogAction.login(user.getId(), WebHelper.retrieveRemoteAddress(request)); // &line[Action_Logging] 
+        LogAction.login(user.getId(), WebHelper.retrieveRemoteAddress(request)); // &line[Authentication_Logging]
     }
     // &end[User_Login]
 

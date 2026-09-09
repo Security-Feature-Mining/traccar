@@ -64,7 +64,7 @@ public class CacheManager implements BroadcastInterface {
     private final Storage storage;
     private final BroadcastService broadcastService;
 
-    private final ReadWriteLock lock = new ReentrantReadWriteLock(); // &line[Read_Write_Lock]
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private final CacheGraph graph = new CacheGraph();
 
@@ -92,56 +92,56 @@ public class CacheManager implements BroadcastInterface {
 
     public <T extends BaseModel> T getObject(Class<T> clazz, long id) {
         try {
-            lock.readLock().lock(); // &line[Read_Write_Lock]
+            lock.readLock().lock();
             return graph.getObject(clazz, id);
         } finally {
-            lock.readLock().unlock(); // &line[Read_Write_Lock]
+            lock.readLock().unlock();
         }
     }
 
     public <T extends BaseModel> Set<T> getDeviceObjects(long deviceId, Class<T> clazz) {
         try {
-            lock.readLock().lock(); // &line[Read_Write_Lock]
+            lock.readLock().lock();
             return graph.getObjects(Device.class, deviceId, clazz, Set.of(Group.class), true)
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
-            lock.readLock().unlock(); // &line[Read_Write_Lock]
+            lock.readLock().unlock();
         }
     }
 
     public Position getPosition(long deviceId) {
         try {
-            lock.readLock().lock(); // &line[Read_Write_Lock]
+            lock.readLock().lock();
             return devicePositions.get(deviceId);
         } finally {
-            lock.readLock().unlock(); // &line[Read_Write_Lock]
+            lock.readLock().unlock();
         }
     }
 
     public Server getServer() {
         try {
-            lock.readLock().lock(); // &line[Read_Write_Lock]
+            lock.readLock().lock();
             return server;
         } finally {
-            lock.readLock().unlock(); // &line[Read_Write_Lock]
+            lock.readLock().unlock();
         }
     }
 
     public Set<User> getNotificationUsers(long notificationId, long deviceId) {
         try {
-            lock.readLock().lock(); // &line[Read_Write_Lock]
+            lock.readLock().lock();
             Set<User> deviceUsers = getDeviceObjects(deviceId, User.class);
             return graph.getObjects(Notification.class, notificationId, User.class, Set.of(), false)
                     .filter(deviceUsers::contains)
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
-            lock.readLock().unlock(); // &line[Read_Write_Lock]
+            lock.readLock().unlock();
         }
     }
 
     public Set<Notification> getDeviceNotifications(long deviceId) {
         try {
-            lock.readLock().lock(); // &line[Read_Write_Lock]
+            lock.readLock().lock();
             var direct = graph.getObjects(Device.class, deviceId, Notification.class, Set.of(Group.class), true)
                     .map(BaseModel::getId)
                     .collect(Collectors.toUnmodifiableSet());
@@ -149,13 +149,13 @@ public class CacheManager implements BroadcastInterface {
                     .filter(notification -> notification.getAlways() || direct.contains(notification.getId()))
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
-            lock.readLock().unlock(); // &line[Read_Write_Lock]
+            lock.readLock().unlock();
         }
     }
 
     public void addDevice(long deviceId, Object key) throws Exception {
         try {
-            lock.writeLock().lock(); // &line[Read_Write_Lock]
+            lock.writeLock().lock();
             var references = deviceReferences.computeIfAbsent(deviceId, k -> new HashSet<>());
             if (references.isEmpty()) {
                 Device device = storage.getObject(Device.class, new Request(
@@ -170,13 +170,13 @@ public class CacheManager implements BroadcastInterface {
             references.add(key);
             LOGGER.debug("Cache add device {} references {} key {}", deviceId, references.size(), key);
         } finally {
-            lock.writeLock().unlock(); // &line[Read_Write_Lock]
+            lock.writeLock().unlock();
         }
     }
 
     public void removeDevice(long deviceId, Object key) {
         try {
-            lock.writeLock().lock(); // &line[Read_Write_Lock]
+            lock.writeLock().lock();
             var references = deviceReferences.computeIfAbsent(deviceId, k -> new HashSet<>());
             references.remove(key);
             if (references.isEmpty()) {
@@ -186,18 +186,18 @@ public class CacheManager implements BroadcastInterface {
             }
             LOGGER.debug("Cache remove device {} references {} key {}", deviceId, references.size(), key);
         } finally {
-            lock.writeLock().unlock(); // &line[Read_Write_Lock]
+            lock.writeLock().unlock();
         }
     }
 
     public void updatePosition(Position position) {
         try {
-            lock.writeLock().lock(); // &line[Read_Write_Lock]
+            lock.writeLock().lock();
             if (deviceReferences.containsKey(position.getDeviceId())) {
                 devicePositions.put(position.getDeviceId(), position);
             }
         } finally {
-            lock.writeLock().unlock(); // &line[Read_Write_Lock]
+            lock.writeLock().unlock();
         }
     }
 

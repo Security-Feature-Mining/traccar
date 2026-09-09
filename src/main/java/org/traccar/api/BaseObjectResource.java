@@ -71,7 +71,7 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
         permissionsService.checkEdit(getUserId(), entity, true, false); // &line[Permission_Check]
 
         entity.setId(storage.addObject(entity, new Request(new Columns.Exclude("id"))));
-        LogAction.create(getUserId(), entity); // &line[Action_Logging]
+        LogAction.create(getUserId(), entity);
 
         if (getUserId() != ServiceAccountUser.ID) {
             storage.addPermission(new Permission(User.class, getUserId(), baseClass, entity.getId())); // &line[Permission_Assignment]
@@ -116,7 +116,7 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
             }
         }
         cacheManager.invalidateObject(true, entity.getClass(), entity.getId(), ObjectOperation.UPDATE);  // &line[Invalidate_Object]
-        LogAction.edit(getUserId(), entity); // &line[Action_Logging]
+        LogAction.edit(getUserId(), entity);
 
         return Response.ok(entity).build();
     }
