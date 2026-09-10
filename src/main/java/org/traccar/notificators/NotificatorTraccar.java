@@ -84,19 +84,19 @@ public class NotificatorTraccar extends Notificator {
     }
 
     @Override
-    public void send(User user, NotificationMessage shortMessage, Event event, Position position) {
-        if (user.hasAttribute("notificationTokens")) {
+    public void send(User user, NotificationMessage shortMessage, Event event, Position position) { // &line[User_Management]
+        if (user.hasAttribute("notificationTokens")) { // &line[User_Management]
 
             NotificationObject item = new NotificationObject();
             item.title = shortMessage.getSubject();
             item.body = shortMessage.getBody();
             item.sound = "default";
 
-            String[] tokenArray = user.getString("notificationTokens").split("[, ]");
+            String[] tokenArray = user.getString("notificationTokens").split("[, ]"); // &line[User_Management]
             List<String> registrationTokens = new ArrayList<>(Arrays.asList(tokenArray));
 
             Message message = new Message();
-            message.tokens = user.getString("notificationTokens").split("[, ]");
+            message.tokens = user.getString("notificationTokens").split("[, ]"); // &line[User_Management]
             message.notification = item;
 
             // &begin[Authorization_Header]
@@ -114,20 +114,20 @@ public class NotificatorTraccar extends Notificator {
                                 || errorCode.equals("messaging/registration-token-not-registered")) {
                             failedTokens.add(registrationTokens.get(i));
                         }
-                        LOGGER.warn("Push user {} error - {}", user.getId(), error.getString("message"));
+                        LOGGER.warn("Push user {} error - {}", user.getId(), error.getString("message")); // &line[User_Management, Authentication_Logging]
                     }
                 }
                 if (!failedTokens.isEmpty()) {
                     registrationTokens.removeAll(failedTokens);
                     if (registrationTokens.isEmpty()) {
-                        user.getAttributes().remove("notificationTokens");
+                        user.getAttributes().remove("notificationTokens"); // &line[User_Management]
                     } else {
-                        user.set("notificationTokens", String.join(",", registrationTokens));
+                        user.set("notificationTokens", String.join(",", registrationTokens)); // &line[User_Management]
                     }
                     storage.updateObject(user, new Request(
                             new Columns.Include("attributes"),
-                            new Condition.Equals("id", user.getId())));
-                    cacheManager.invalidateObject(true, User.class, user.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object]
+                            new Condition.Equals("id", user.getId()))); // &line[User_Management]
+                    cacheManager.invalidateObject(true, User.class, user.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object, User_Management]
                 }
             } catch (Exception e) {
                 LOGGER.warn("Push error", e);

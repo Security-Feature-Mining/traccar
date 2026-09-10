@@ -135,7 +135,7 @@ public class LoginService {
 
         if (user == null) {
             user = new User();
-            UserUtil.setUserDefaults(user, config);
+            UserUtil.setUserDefaults(user, config); // &line[User_Management]
             user.setName(name);
             user.setEmail(email);
             user.setFixedEmail(true);

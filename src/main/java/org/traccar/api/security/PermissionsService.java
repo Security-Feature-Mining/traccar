@@ -44,7 +44,7 @@ public class PermissionsService {
     private final Storage storage;
 
     private Server server;
-    private User user;
+    private User user; // &line[User_Management]
 
     @Inject
     public PermissionsService(Storage storage) {
@@ -59,6 +59,7 @@ public class PermissionsService {
         return server;
     }
 
+    // &begin[User_Management]
     public User getUser(long userId) throws StorageException {
         if (user == null && userId > 0) {
             if (userId == ServiceAccountUser.ID) {
@@ -70,67 +71,68 @@ public class PermissionsService {
         }
         return user;
     }
+    // &end[User_Management]
 
     // &begin[Role_Check]
     public boolean notAdmin(long userId) throws StorageException {
-        return !getUser(userId).getAdministrator();
+        return !getUser(userId).getAdministrator(); // &line[User_Management]
     }
 
     public void checkAdmin(long userId) throws StorageException, SecurityException {
-        if (!getUser(userId).getAdministrator()) {
-            throw new SecurityException("Administrator access required");
+        if (!getUser(userId).getAdministrator()) { // &line[User_Management]
+            throw new SecurityException("Administrator access required"); // &line[SecurityException]
         }
     }
 
     public void checkManager(long userId) throws StorageException, SecurityException {
-        if (!getUser(userId).getAdministrator() && getUser(userId).getUserLimit() == 0) {
-            throw new SecurityException("Manager access required");
+        if (!getUser(userId).getAdministrator() && getUser(userId).getUserLimit() == 0) { // &line[User_Management]
+            throw new SecurityException("Manager access required"); // &line[SecurityException]
         }
     }
     // &end[Role_Check]
 
+    // &begin[Permission_Check]
     public interface CheckRestrictionCallback {
         boolean denied(UserRestrictions userRestrictions);
     }
 
-    // &begin[Permission_Check]
     public void checkRestriction(
-            long userId, CheckRestrictionCallback callback) throws StorageException, SecurityException {
-        if (!getUser(userId).getAdministrator() // &line[Role_Check]
+            long userId, CheckRestrictionCallback callback) throws StorageException, SecurityException { // &line[SecurityException]
+        if (!getUser(userId).getAdministrator() // &line[Role_Check, User_Management]
                 && (callback.denied(getServer()) || callback.denied(getUser(userId)))) {
-            throw new SecurityException("Operation restricted");
+            throw new SecurityException("Operation restricted"); // &line[SecurityException]
         }
     }
 
     public void checkEdit(
             long userId, Class<?> clazz, boolean addition, boolean skipReadonly)
-            throws StorageException, SecurityException {
-        if (!getUser(userId).getAdministrator()) {  // &line[Role_Check]
+            throws StorageException, SecurityException { // &line[SecurityException]
+        if (!getUser(userId).getAdministrator()) {  // &line[Role_Check, User_Management]
             boolean denied = false;
-            if (!skipReadonly && (getServer().getReadonly() || getUser(userId).getReadonly())) {
+            if (!skipReadonly && (getServer().getReadonly() || getUser(userId).getReadonly())) { // &line[User_Management]
                 denied = true;
             } else if (clazz.equals(Device.class)) {
-                denied = getServer().getDeviceReadonly() || getUser(userId).getDeviceReadonly()
-                        || addition && getUser(userId).getDeviceLimit() == 0;
-                if (!denied && addition && getUser(userId).getDeviceLimit() > 0) {
+                denied = getServer().getDeviceReadonly() || getUser(userId).getDeviceReadonly() // &line[User_Management]
+                        || addition && getUser(userId).getDeviceLimit() == 0; // &line[User_Management]
+                if (!denied && addition && getUser(userId).getDeviceLimit() > 0) { // &line[User_Management]
                     int deviceCount = storage.getObjects(Device.class, new Request(
                             new Columns.Include("id"),
                             new Condition.Permission(User.class, userId, Device.class))).size();
-                    denied = deviceCount >= getUser(userId).getDeviceLimit();
+                    denied = deviceCount >= getUser(userId).getDeviceLimit(); // &line[User_Management]
                 }
             } else if (clazz.equals(Command.class)) {
                 denied = getServer().getLimitCommands() || getUser(userId).getLimitCommands();
             }
             if (denied) {
-                throw new SecurityException("Write access denied");
+                throw new SecurityException("Write access denied"); // &line[SecurityException]
             }
         }
     }
 
     public void checkEdit(
             long userId, BaseModel object, boolean addition, boolean skipReadonly)
-            throws StorageException, SecurityException {
-        if (!getUser(userId).getAdministrator()) { // &line[Role_Check]
+            throws StorageException, SecurityException { // &line[SecurityException]
+        if (!getUser(userId).getAdministrator()) { // &line[Role_Check, User_Management]
             checkEdit(userId, object.getClass(), addition, skipReadonly);
             if (object instanceof GroupedModel after) {
                 if (after.getGroupId() > 0) {
@@ -171,16 +173,17 @@ public class PermissionsService {
         }
     }
 
-    public void checkUser(long userId, long managedUserId) throws StorageException, SecurityException {
+    // &begin[User_Management]
+    public void checkUser(long userId, long managedUserId) throws StorageException, SecurityException { // &line[SecurityException]
         if (userId != managedUserId && !getUser(userId).getAdministrator()) { // &line[Role_Check]
             if (!getUser(userId).getManager()
                     || storage.getPermissions(User.class, userId, ManagedUser.class, managedUserId).isEmpty()) {
-                throw new SecurityException("User access denied");
+                throw new SecurityException("User access denied"); // &line[SecurityException]
             }
         }
     }
 
-    public void checkUserUpdate(long userId, User before, User after) throws StorageException, SecurityException {
+    public void checkUserUpdate(long userId, User before, User after) throws StorageException, SecurityException { // &line[SecurityException]
         if (before.getAdministrator() != after.getAdministrator() // &line[Role_Check]
                 || before.getDeviceLimit() != after.getDeviceLimit()
                 || before.getUserLimit() != after.getUserLimit()) {
@@ -211,18 +214,19 @@ public class PermissionsService {
             checkAdmin(userId); // &line[Role_Check]
         }
     }
+    // &end[User_Management]
 
     public <T extends BaseModel> void checkPermission(
-            Class<T> clazz, long userId, long objectId) throws StorageException, SecurityException {
-        if (!getUser(userId).getAdministrator() && !(clazz.equals(User.class) && userId == objectId)) { // &line[Role_Check]
+            Class<T> clazz, long userId, long objectId) throws StorageException, SecurityException { // &line[SecurityException]
+        if (!getUser(userId).getAdministrator() && !(clazz.equals(User.class) && userId == objectId)) { // &line[Role_Check, User_Management]
             var object = storage.getObject(clazz, new Request(
                     new Columns.Include("id"),
                     new Condition.And(
                             new Condition.Equals("id", objectId),
                             new Condition.Permission(
-                                    User.class, userId, clazz.equals(User.class) ? ManagedUser.class : clazz))));
+                                    User.class, userId, clazz.equals(User.class) ? ManagedUser.class : clazz)))); // &line[User_Management]
             if (object == null) {
-                throw new SecurityException(clazz.getSimpleName() + " access denied");
+                throw new SecurityException(clazz.getSimpleName() + " access denied"); // &line[SecurityException]
             }
         }
     }

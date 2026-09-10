@@ -17,6 +17,7 @@ package org.traccar.api.security;
 
 import org.traccar.model.User;
 
+// &begin[User_Management]
 public class ServiceAccountUser extends User {
 
     public static final long ID = 9000000000000000000L;
@@ -28,3 +29,4 @@ public class ServiceAccountUser extends User {
         setAdministrator(true); // &line[Role_Assignment] 
     }
 }
+// &end[User_Management]

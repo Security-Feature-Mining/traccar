@@ -77,24 +77,26 @@ public class SessionResource extends BaseResource {
     private HttpServletRequest request;
 
     // &begin[User_Authentication]
-    @PermitAll
+    @PermitAll // &line[Permission]
     @GET
-    public User get(@QueryParam("token") String token) throws StorageException, IOException, GeneralSecurityException {
+    public User get(@QueryParam("token") String token) throws StorageException, IOException, GeneralSecurityException { // &line[SecurityException]
 
         // &begin[Token_Authentication]
         if (token != null) {
             LoginResult loginResult = loginService.login(token);
             if (loginResult != null) {
+                // &begin[User_Management]
                 User user = loginResult.getUser();
                 SessionHelper.userLogin(request, user, loginResult.getExpiration());
                 return user;
+                // &end[User_Management]
             }
         }
         // &end[Token_Authentication]
 
         Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY);
         if (userId != null) {
-            User user = permissionsService.getUser(userId);
+            User user = permissionsService.getUser(userId); // &line[User_Management]
             if (user != null) {
                 return user;
             }
@@ -115,7 +117,7 @@ public class SessionResource extends BaseResource {
     }
 
     // &begin[User_Login]
-    @PermitAll
+    @PermitAll // &line[Permission]
     @POST
     public User add(
             @FormParam("email") String email,
@@ -163,7 +165,7 @@ public class SessionResource extends BaseResource {
         return tokenManager.generateToken(getUserId(), expiration); // &line[Token_Generation] 
     }
     // &begin[OpenID_Authentication]
-    @PermitAll
+    @PermitAll // &line[Permission]
     @Path("openid/auth")
     @GET
     public Response openIdAuth() {
@@ -171,7 +173,7 @@ public class SessionResource extends BaseResource {
     }
 
     // &begin[Token_Generation]
-    @PermitAll
+    @PermitAll // &line[Permission]
     @Path("openid/callback")
     @GET
     public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException {

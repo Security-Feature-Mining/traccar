@@ -25,6 +25,7 @@ import org.traccar.storage.StorageName;
 import java.util.Date;
 import java.util.HashMap;
 
+// &begin[User_Management]
 @StorageName("tc_users")
 public class User extends ExtendedModel implements UserRestrictions, Disableable {
 
@@ -310,6 +311,7 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
+
     // &end[Password]
     // &begin[Salting]
     private String salt;
@@ -345,3 +347,4 @@ public class User extends ExtendedModel implements UserRestrictions, Disableable
         return thisAttributes.equals(otherAttributes);
     }
 }
+// &end[User_Management]

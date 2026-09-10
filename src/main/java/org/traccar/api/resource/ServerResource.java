@@ -83,7 +83,7 @@ public class ServerResource extends BaseResource {
     @Nullable
     private Geocoder geocoder;
 
-    @PermitAll
+    @PermitAll // &line[Permission]
     @GET
     public Server get() throws StorageException {
         Server server = storage.getObject(Server.class, new Request(new Columns.All()));
@@ -94,13 +94,13 @@ public class ServerResource extends BaseResource {
         server.setOpenIdEnabled(openIdProvider != null);
         server.setOpenIdForce(openIdProvider != null && openIdProvider.getForce());
         // &end[OpenID_Authentication]
-        User user = permissionsService.getUser(getUserId());
-        if (user != null) {
-            if (user.getAdministrator()) { // &line[Role_Check]
+        User user = permissionsService.getUser(getUserId()); // &line[User_Management]
+        if (user != null) { // &line[User_Management]
+            if (user.getAdministrator()) { // &line[Role_Check, User_Management]
                 server.setStorageSpace(Log.getStorageSpace()); // &line[Log_Limit] 
             }
         } else {
-            server.setNewServer(UserUtil.isEmpty(storage));
+            server.setNewServer(UserUtil.isEmpty(storage)); // &line[User_Management]
         }
         return server;
     }

@@ -54,15 +54,15 @@ public class SummaryReportProvider {
 
     private final Config config;
     private final ReportUtils reportUtils;
-    private final PermissionsService permissionsService;
+    private final PermissionsService permissionsService; // &line[Permission]
     private final Storage storage;
 
     @Inject
     public SummaryReportProvider(
-            Config config, ReportUtils reportUtils, PermissionsService permissionsService, Storage storage) {
+            Config config, ReportUtils reportUtils, PermissionsService permissionsService, Storage storage) { // &line[Permission]
         this.config = config;
         this.reportUtils = reportUtils;
-        this.permissionsService = permissionsService;
+        this.permissionsService = permissionsService; // &line[Permission]
         this.storage = storage;
     }
 
@@ -154,7 +154,7 @@ public class SummaryReportProvider {
             Date from, Date to, boolean daily) throws StorageException {
         reportUtils.checkPeriodLimit(from, to);
 
-        var tz = UserUtil.getTimezone(permissionsService.getServer(), permissionsService.getUser(userId)).toZoneId();
+        var tz = UserUtil.getTimezone(permissionsService.getServer(), permissionsService.getUser(userId)).toZoneId(); // &line[User_Management, Permission]
 
         ArrayList<SummaryReportItem> result = new ArrayList<>();
         for (Device device: DeviceUtil.getAccessibleDevices(storage, userId, deviceIds, groupIds)) {

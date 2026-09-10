@@ -49,6 +49,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.LinkedList;
 
+// &begin[User_Management]
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -87,7 +88,7 @@ public class UserResource extends BaseObjectResource<User> {
     }
 
     @Override
-    @PermitAll
+    @PermitAll // &line[Permission]
     @POST
     public Response add(User entity) throws StorageException {
         User currentUser = getUserId() > 0 ? permissionsService.getUser(getUserId()) : null; // &line[Permission]
@@ -97,8 +98,8 @@ public class UserResource extends BaseObjectResource<User> {
                 int userLimit = currentUser.getUserLimit();
                 if (userLimit > 0) {
                     int userCount = storage.getObjects(baseClass, new Request(
-                            new Columns.All(),
-                            new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups()))  // &line[Permission_Check]
+                                    new Columns.All(),
+                                    new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups()))  // &line[Permission_Check]
                             .size();
                     if (userCount >= userLimit) {
                         throw new SecurityException("Manager user limit reached");
@@ -148,7 +149,7 @@ public class UserResource extends BaseObjectResource<User> {
 
     // &begin[TOTP_Key_Generation]
     @Path("totp")
-    @PermitAll
+    @PermitAll // &line[Permission]
     @POST
     public String generateTotpKey() throws StorageException {
         if (!permissionsService.getServer().getBoolean(Keys.WEB_TOTP_ENABLE.getKey())) {
@@ -159,3 +160,4 @@ public class UserResource extends BaseObjectResource<User> {
     // &end[TOTP_Key_Generation]
 
 }
+// &end[User_Management]

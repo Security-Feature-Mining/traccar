@@ -17,6 +17,7 @@ package org.traccar.model;
 
 import org.traccar.storage.StorageName;
 
+// &begin[User_Management]
 @StorageName("tc_groups")
 public class Group extends GroupedModel {
 
@@ -31,3 +32,4 @@ public class Group extends GroupedModel {
     }
 
 }
+// &end[User_Management]

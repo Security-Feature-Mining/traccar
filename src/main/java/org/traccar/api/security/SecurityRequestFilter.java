@@ -92,9 +92,9 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
                 Long userId = (Long) request.getSession().getAttribute(SessionHelper.USER_ID_KEY); // &line[User_Session]
                 Date expiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY); // &line[Token_Expiration]
                 if (userId != null) {
-                    User user = injector.getInstance(PermissionsService.class).getUser(userId);
-                    if (user != null) {
-                        user.checkDisabled(); // &line[Permission_Check]
+                    User user = injector.getInstance(PermissionsService.class).getUser(userId); // &line[User_Management]
+                    if (user != null) { // &line[User_Management]
+                        user.checkDisabled(); // &line[Permission_Check, User_Management]
                         statisticsManager.registerRequest(userId);
                         securityContext = new UserSecurityContext(new UserPrincipal(userId, expiration)); // &line[Token_Expiration, User_Management]
                     }
@@ -110,7 +110,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
             requestContext.setSecurityContext(securityContext);
         } else {
             Method method = resourceInfo.getResourceMethod();
-            if (!method.isAnnotationPresent(PermitAll.class)) {
+            if (!method.isAnnotationPresent(PermitAll.class)) { // &line[Permission]
                 Response.ResponseBuilder responseBuilder = Response.status(Response.Status.UNAUTHORIZED);
                 String accept = request.getHeader("Accept");
                 if (accept != null && accept.contains("text/html")) {

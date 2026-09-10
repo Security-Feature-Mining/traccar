@@ -18,6 +18,7 @@ package org.traccar.api.security;
 import java.security.Principal;
 import java.util.Date;
 
+// &begin[User_Management]
 public class UserPrincipal implements Principal {
 
     private final long userId;
@@ -44,3 +45,4 @@ public class UserPrincipal implements Principal {
     }
 
 }
+// &end[User_Management]

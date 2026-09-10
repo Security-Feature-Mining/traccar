@@ -81,8 +81,10 @@ public class DeviceResource extends BaseObjectResource<Device> {
     @Inject
     private MediaManager mediaManager;
 
+    // &begin[Token_Management]
     @Inject
     private TokenManager tokenManager;
+    // &end[Token_Management]
 
     public DeviceResource() {
         super(Device.class);
@@ -102,14 +104,14 @@ public class DeviceResource extends BaseObjectResource<Device> {
                         new Columns.All(),
                         new Condition.And(
                                 new Condition.Equals("uniqueId", uniqueId),
-                                new Condition.Permission(User.class, getUserId(), Device.class))))); // &line[Permission]
+                                new Condition.Permission(User.class, getUserId(), Device.class))))); // &line[Permission, User_Management]
             }
             for (Long deviceId : deviceIds) {
                 result.addAll(storage.getObjects(Device.class, new Request(
                         new Columns.All(),
                         new Condition.And(
                                 new Condition.Equals("id", deviceId),
-                                new Condition.Permission(User.class, getUserId(), Device.class))))); // &line[Permission]
+                                new Condition.Permission(User.class, getUserId(), Device.class))))); // &line[Permission, User_Management]
             }
             return result;
 
@@ -119,14 +121,14 @@ public class DeviceResource extends BaseObjectResource<Device> {
 
             if (all) {
                 if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check]
-                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[Permission]
+                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[Permission, User_Management]
                 }
             } else {
                 if (userId == 0) {
-                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[Permission]
+                    conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[Permission, User_Management]
                 } else {
                     permissionsService.checkUser(getUserId(), userId); // &line[Permission_Check]
-                    conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[Permission]
+                    conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[Permission, User_Management]
                 }
             }
 
@@ -139,8 +141,8 @@ public class DeviceResource extends BaseObjectResource<Device> {
     @Path("{id}/accumulators")
     @PUT
     public Response updateAccumulators(DeviceAccumulators entity) throws Exception {
-        permissionsService.checkPermission(Device.class, getUserId(), entity.getDeviceId()); // &line[Permission_Check]
-        permissionsService.checkEdit(getUserId(), Device.class, false, false); // &line[Permission_Check]
+        permissionsService.checkPermission(Device.class, getUserId(), entity.getDeviceId()); // &line[Permission_Check, User_Management]
+        permissionsService.checkEdit(getUserId(), Device.class, false, false); // &line[Permission_Check, User_Management]
 
         Position position = storage.getObject(Position.class, new Request(
                 new Columns.All(), new Condition.LatestPositions(entity.getDeviceId())));
@@ -172,7 +174,7 @@ public class DeviceResource extends BaseObjectResource<Device> {
             throw new IllegalArgumentException();
         }
 
-        LogAction.resetAccumulators(getUserId(), entity.getDeviceId());
+        LogAction.resetAccumulators(getUserId(), entity.getDeviceId()); // &line[User_Management]
         return Response.noContent().build();
     }
 
@@ -198,7 +200,7 @@ public class DeviceResource extends BaseObjectResource<Device> {
                 new Columns.All(),
                 new Condition.And(
                         new Condition.Equals("id", deviceId),
-                        new Condition.Permission(User.class, getUserId(), Device.class)))); // &line[Permission_Check]
+                        new Condition.Permission(User.class, getUserId(), Device.class)))); // &line[Permission_Check, User_Management]
         if (device != null) {
             String name = "device";
             String extension = imageExtension(type);
@@ -226,9 +228,10 @@ public class DeviceResource extends BaseObjectResource<Device> {
     @POST
     public String shareDevice(
             @FormParam("deviceId") long deviceId,
-            @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException] 
+            @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException, Token_Expiration]
 
-        User user = permissionsService.getUser(getUserId()); // &line[Permission] 
+        // &begin[User_Management]
+        User user = permissionsService.getUser(getUserId()); // &line[Permission]
         // &begin[Permission_Check]
         if (permissionsService.getServer().getBoolean(Keys.DEVICE_SHARE_DISABLE.getKey())) {
             throw new SecurityException("Sharing is disabled");
@@ -242,32 +245,35 @@ public class DeviceResource extends BaseObjectResource<Device> {
             expiration = user.getExpirationTime();
         }
         // &end[Token_Expiration]
+        // &end[User_Management]
 
         Device device = storage.getObject(Device.class, new Request(
                 new Columns.All(),
                 new Condition.And(
                         new Condition.Equals("id", deviceId),
-                        new Condition.Permission(User.class, user.getId(), Device.class)))); // &line[Permission_Check]
+                        new Condition.Permission(User.class, user.getId(), Device.class)))); // &line[Permission_Check, User_Management]
 
+        // &begin[User_Management]
         String shareEmail = user.getEmail() + ":" + device.getUniqueId();
         User share = storage.getObject(User.class, new Request(
                 new Columns.All(), new Condition.Equals("email", shareEmail)));
+        // &end[User_Management]
 
         if (share == null) {
-            share = new User();
+            share = new User(); // &line[User_Management]
             share.setName(device.getName());
             share.setEmail(shareEmail);
             share.setExpirationTime(expiration); // &line[Token_Expiration]
             share.setTemporary(true); // &line[Role_Assignment]
             share.setReadonly(true); // &line[Permission_Assignment]
-            // &begin[Permission_Check]
+            // &begin[Permission_Check, User_Management]
             share.setLimitCommands(user.getLimitCommands() || !config.getBoolean(Keys.WEB_SHARE_DEVICE_COMMANDS));
             share.setDisableReports(user.getDisableReports() || !config.getBoolean(Keys.WEB_SHARE_DEVICE_REPORTS));
-            // &end[Permission_Check]
+            // &end[Permission_Check, User_Management]
 
             share.setId(storage.addObject(share, new Request(new Columns.Exclude("id"))));
 
-            storage.addPermission(new Permission(User.class, share.getId(), Device.class, deviceId)); // &line[Permission_Assignment]
+            storage.addPermission(new Permission(User.class, share.getId(), Device.class, deviceId)); // &line[Permission_Assignment, User_Management]
         }
 
         return tokenManager.generateToken(share.getId(), expiration); // &line[Token_Expiration]

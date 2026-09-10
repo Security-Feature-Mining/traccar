@@ -132,15 +132,15 @@ public class ReportUtils {
 
     public org.jxls.common.Context initializeContext(long userId) throws StorageException {
         var server = permissionsService.getServer(); // &line[Permission]
-        var user = permissionsService.getUser(userId); // &line[Permission]
+        var user = permissionsService.getUser(userId); // &line[Permission, User_Management]
         var context = PoiTransformer.createInitialContext();
-        context.putVar("distanceUnit", UserUtil.getDistanceUnit(server, user));
-        context.putVar("speedUnit", UserUtil.getSpeedUnit(server, user));
-        context.putVar("volumeUnit", UserUtil.getVolumeUnit(server, user));
+        context.putVar("distanceUnit", UserUtil.getDistanceUnit(server, user)); // &line[User_Management]
+        context.putVar("speedUnit", UserUtil.getSpeedUnit(server, user)); // &line[User_Management]
+        context.putVar("volumeUnit", UserUtil.getVolumeUnit(server, user)); // &line[User_Management]
         context.putVar("webUrl", velocityEngine.getProperty("web.url"));
         context.putVar("dateTool", new DateTool());
         context.putVar("numberTool", new NumberTool());
-        context.putVar("timezone", UserUtil.getTimezone(server, user));
+        context.putVar("timezone", UserUtil.getTimezone(server, user)); // &line[User_Management]
         context.putVar("locale", Locale.getDefault());
         context.putVar("bracketsRegex", "[\\{\\}\"]");
         return context;

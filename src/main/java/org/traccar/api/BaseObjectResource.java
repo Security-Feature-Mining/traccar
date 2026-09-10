@@ -56,7 +56,7 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
     @Path("{id}")
     @GET
     public Response getSingle(@PathParam("id") long id) throws StorageException {
-        permissionsService.checkPermission(baseClass, getUserId(), id); // &line[Permission_Check]
+        permissionsService.checkPermission(baseClass, getUserId(), id); // &line[Permission_Check, User_Management]
         T entity = storage.getObject(baseClass, new Request(
                 new Columns.All(), new Condition.Equals("id", id)));
         if (entity != null) {
@@ -68,19 +68,21 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
 
     @POST
     public Response add(T entity) throws Exception {
-        permissionsService.checkEdit(getUserId(), entity, true, false); // &line[Permission_Check]
+        permissionsService.checkEdit(getUserId(), entity, true, false); // &line[Permission_Check, User_Management]
 
         entity.setId(storage.addObject(entity, new Request(new Columns.Exclude("id"))));
+        // &begin[User_Management]
         LogAction.create(getUserId(), entity);
 
         if (getUserId() != ServiceAccountUser.ID) {
             storage.addPermission(new Permission(User.class, getUserId(), baseClass, entity.getId())); // &line[Permission_Assignment]
             // &begin[Permission_Invalidation]
             cacheManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true);
-            connectionManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true); 
+            connectionManager.invalidatePermission(true, User.class, getUserId(), baseClass, entity.getId(), true);
             // &end[Permission_Invalidation]
             LogAction.link(getUserId(), User.class, getUserId(), baseClass, entity.getId()); // &line[Permission_Change_Logging]
         }
+        // &end[User_Management]
 
         return Response.ok(entity).build();
     }
@@ -91,6 +93,7 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
         permissionsService.checkPermission(baseClass, getUserId(), entity.getId()); // &line[Permission_Check]
 
         boolean skipReadonly = false;
+        // &begin[User_Management]
         if (entity instanceof User after) {
             User before = storage.getObject(User.class, new Request(
                     new Columns.All(), new Condition.Equals("id", entity.getId())));
@@ -102,12 +105,14 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
                 throw new IllegalArgumentException("Cycle in group hierarchy");
             }
         }
+        // &end[User_Management]
 
         permissionsService.checkEdit(getUserId(), entity, false, skipReadonly); // &line[Permission_Check]
 
         storage.updateObject(entity, new Request(
                 new Columns.Exclude("id"),
                 new Condition.Equals("id", entity.getId())));
+        // &begin[User_Management]
         if (entity instanceof User user) {
             if (user.getHashedPassword() != null) { // &line[Password]
                 storage.updateObject(entity, new Request(
@@ -115,6 +120,7 @@ public abstract class BaseObjectResource<T extends BaseModel> extends BaseResour
                         new Condition.Equals("id", entity.getId())));
             }
         }
+        // &end[User_Management]
         cacheManager.invalidateObject(true, entity.getClass(), entity.getId(), ObjectOperation.UPDATE);  // &line[Invalidate_Object]
         LogAction.edit(getUserId(), entity);
 

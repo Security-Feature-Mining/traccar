@@ -55,7 +55,7 @@ public class PasswordResource extends BaseResource {
 
     // &begin[Password_Reset]
     @Path("reset")
-    @PermitAll
+    @PermitAll // &line[Permission]
     @POST
     public Response reset(@FormParam("email") String email)
             throws StorageException, MessagingException, GeneralSecurityException, IOException {
@@ -75,7 +75,7 @@ public class PasswordResource extends BaseResource {
 
     // &begin[Password_Update]
     @Path("update")
-    @PermitAll
+    @PermitAll // &line[Permission]
     @POST
     public Response update(
             @FormParam("token") String token, @FormParam("password") String password)

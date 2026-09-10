@@ -91,8 +91,8 @@ public class CommandResource extends ExtendedObjectResource<Command> {
         var commands = storage.getObjects(baseClass, new Request(
                 new Columns.All(),
                 Condition.merge(List.of(
-                        new Condition.Permission(User.class, getUserId(), baseClass),
-                        new Condition.Permission(Device.class, deviceId, baseClass)
+                        new Condition.Permission(User.class, getUserId(), baseClass), // &line[Permission, User_Management] 
+                        new Condition.Permission(Device.class, deviceId, baseClass) // &line[Permission]
                 ))));
 
         return commands.stream().filter(command -> {

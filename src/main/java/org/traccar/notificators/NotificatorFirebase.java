@@ -69,22 +69,24 @@ public class NotificatorFirebase extends Notificator {
         this.storage = storage;
         this.cacheManager = cacheManager;
 
+        // &begin[User_Management]
         InputStream serviceAccount = new ByteArrayInputStream(
                 config.getString(Keys.NOTIFICATOR_FIREBASE_SERVICE_ACCOUNT).getBytes());
+        // &end[User_Management]
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount)) // &line[Credentials] 
                 .build();
 
         FirebaseApp.initializeApp(options);
     }
 
     @Override
-    public void send(User user, NotificationMessage message, Event event, Position position) throws MessageException {
-        if (user.hasAttribute("notificationTokens")) {
+    public void send(User user, NotificationMessage message, Event event, Position position) throws MessageException { // &line[User_Management]
+        if (user.hasAttribute("notificationTokens")) { // &line[User_Management]
 
             List<String> registrationTokens = new ArrayList<>(
-                    Arrays.asList(user.getString("notificationTokens").split("[, ]")));
+                    Arrays.asList(user.getString("notificationTokens").split("[, ]"))); // &line[User_Management]
 
             var messageBuilder = MulticastMessage.builder()
                     .setNotification(com.google.firebase.messaging.Notification.builder()
@@ -125,14 +127,14 @@ public class NotificatorFirebase extends Notificator {
                 if (!failedTokens.isEmpty()) {
                     registrationTokens.removeAll(failedTokens);
                     if (registrationTokens.isEmpty()) {
-                        user.getAttributes().remove("notificationTokens");
+                        user.getAttributes().remove("notificationTokens"); // &line[User_Management]
                     } else {
-                        user.set("notificationTokens", String.join(",", registrationTokens));
+                        user.set("notificationTokens", String.join(",", registrationTokens)); // &line[User_Management]
                     }
                     storage.updateObject(user, new Request(
                             new Columns.Include("attributes"),
-                            new Condition.Equals("id", user.getId())));
-                    cacheManager.invalidateObject(true, User.class, user.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object]
+                            new Condition.Equals("id", user.getId()))); // &line[User_Management]
+                    cacheManager.invalidateObject(true, User.class, user.getId(), ObjectOperation.UPDATE); // &line[Invalidate_Object, User_Management]
                 }
             } catch (Exception e) {
                 LOGGER.warn("Firebase error", e);

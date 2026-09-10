@@ -37,7 +37,7 @@ public final class AttributeUtil {
 
     public interface Provider {
         Device getDevice();
-        Group getGroup(long groupId);
+        Group getGroup(long groupId); // &line[User_Management] 
         Server getServer();
         Config getConfig();
     }
@@ -52,6 +52,7 @@ public final class AttributeUtil {
         Object result = device.getAttributes().get(key.getKey());
         long groupId = device.getGroupId();
         while (result == null && groupId > 0) {
+            // &begin[User_Management]
             Group group = provider.getGroup(groupId);
             if (group != null) {
                 result = group.getAttributes().get(key.getKey());
@@ -59,6 +60,7 @@ public final class AttributeUtil {
             } else {
                 groupId = 0;
             }
+            // &end[User_Management]
         }
         if (result == null && key.hasType(KeyType.SERVER)) {
             result = provider.getServer().getAttributes().get(key.getKey());
@@ -127,10 +129,12 @@ public final class AttributeUtil {
             return cacheManager.getObject(Device.class, deviceId);
         }
 
+        // &begin[User_Management]
         @Override
         public Group getGroup(long groupId) {
             return cacheManager.getObject(Group.class, groupId);
         }
+        // &end[User_Management]
 
         @Override
         public Server getServer() {
@@ -162,6 +166,7 @@ public final class AttributeUtil {
             return device;
         }
 
+        // &begin[User_Management]
         @Override
         public Group getGroup(long groupId) {
             try {
@@ -171,6 +176,7 @@ public final class AttributeUtil {
                 throw new RuntimeException(e);
             }
         }
+        // &end[User_Management]
 
         @Override
         public Server getServer() {

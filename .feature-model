@@ -108,6 +108,7 @@ Security_Features
     Security_Monitoring
         Logging
             Authentication_Logging
+            Permission_Change_Logging
             Permission_Logging
             Access_Logging
             Permission_Change_Logging

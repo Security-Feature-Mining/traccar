@@ -49,21 +49,22 @@ public class ExtendedObjectResource<T extends BaseModel> extends BaseObjectResou
 
         if (all) {
             if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check] 
-                conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
+                conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[User_Management]
             }
         } else {
             if (userId == 0) {
-                conditions.add(new Condition.Permission(User.class, getUserId(), baseClass));
+                conditions.add(new Condition.Permission(User.class, getUserId(), baseClass)); // &line[User_Management]
             } else {
                 permissionsService.checkUser(getUserId(), userId);      // &line[Permission_Check]
-                conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[Permission_Assignment]
+                conditions.add(new Condition.Permission(User.class, userId, baseClass).excludeGroups()); // &line[Permission_Assignment, User_Management]
             }
         }
-
+        // &begin[User_Management]
         if (groupId > 0) {
             permissionsService.checkPermission(Group.class, getUserId(), groupId); // &line[Permission_Check]
             conditions.add(new Condition.Permission(Group.class, groupId, baseClass).excludeGroups()); // &line[Permission_Assignment]
         }
+        // &end[User_Management]
         if (deviceId > 0) {
             permissionsService.checkPermission(Device.class, getUserId(), deviceId); // &line[Permission_Check]
             conditions.add(new Condition.Permission(Device.class, deviceId, baseClass).excludeGroups()); // &line[Permission_Assignment]

@@ -93,9 +93,9 @@ public class NotificationResource extends ExtendedObjectResource<Notification> {
     @POST
     @Path("test")
     public Response testMessage() throws MessageException, StorageException {
-        User user = permissionsService.getUser(getUserId());
+        User user = permissionsService.getUser(getUserId()); // &line[User_Management]
         for (Typed method : notificatorManager.getAllNotificatorTypes()) {
-            notificatorManager.getNotificator(method.type()).send(null, user, new Event("test", 0), null);
+            notificatorManager.getNotificator(method.type()).send(null, user, new Event("test", 0), null); // &line[User_Management]
         }
         return Response.noContent().build();
     }
@@ -104,8 +104,8 @@ public class NotificationResource extends ExtendedObjectResource<Notification> {
     @Path("test/{notificator}")
     public Response testMessage(@PathParam("notificator") String notificator)
             throws MessageException, StorageException {
-        User user = permissionsService.getUser(getUserId());
-        notificatorManager.getNotificator(notificator).send(null, user, new Event("test", 0), null);
+        User user = permissionsService.getUser(getUserId()); // &line[User_Management]
+        notificatorManager.getNotificator(notificator).send(null, user, new Event("test", 0), null); // &line[User_Management]
         return Response.noContent().build();
     }
 
@@ -115,32 +115,36 @@ public class NotificationResource extends ExtendedObjectResource<Notification> {
             @PathParam("notificator") String notificator, @QueryParam("userId") List<Long> userIds,
             NotificationMessage message) throws MessageException, StorageException {
         permissionsService.checkManager(getUserId()); // &line[Role_Check]
-        List<User> users;
+        List<User> users; // &line[User_Management]
         if (userIds.isEmpty()) {
             if (permissionsService.notAdmin(getUserId())) {
-                users = storage.getObjects(User.class, new Request(new Columns.All(),
+                users = storage.getObjects(User.class, new Request(new Columns.All(), // &line[User_Management]
                         new Condition.Permission(User.class, getUserId(), ManagedUser.class).excludeGroups())); // &line[Permission_Check]
             } else {
-                users = storage.getObjects(User.class, new Request(new Columns.All()));
+                users = storage.getObjects(User.class, new Request(new Columns.All())); // &line[User_Management]
             }
         } else {
-            users = new ArrayList<>();
+            users = new ArrayList<>(); // &line[User_Management]
             for (long userId : userIds) {
                 var conditions = new LinkedList<Condition>();
                 conditions.add(new Condition.Equals("id", userId));
                 if (permissionsService.notAdmin(getUserId())) { // &line[Role_Check] 
                     conditions.add(new Condition.Permission(
-                            User.class, getUserId(), ManagedUser.class).excludeGroups()); // &line[Permission_Check]
+                            User.class, getUserId(), ManagedUser.class).excludeGroups()); // &line[Permission_Check, User_Management]
                 }
+                // &begin[User_Management]
                 users.add(storage.getObject(
                         User.class, new Request(new Columns.All(), Condition.merge(conditions))));
+                // &end[User_Management]
             }
         }
+        // &begin[User_Management]
         for (User user : users) {
             if (!user.getTemporary()) {
                 notificatorManager.getNotificator(notificator).send(user, message, null, null);
             }
         }
+        // &end[User_Management]
         return Response.noContent().build();
     }
 

@@ -28,6 +28,7 @@ import org.traccar.storage.query.Request;
 import java.util.Date;
 import java.util.TimeZone;
 
+// &begin[User_Management]
 public final class UserUtil {
 
     private UserUtil() {
@@ -76,3 +77,4 @@ public final class UserUtil {
         }
     }
 }
+// &end[User_Management]

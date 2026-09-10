@@ -105,9 +105,10 @@ public class TaskReports extends SingleScheduleTask {
                 new Columns.Include("id"),
                         new Condition.Permission(Device.class, Report.class, report.getId()))) // &line[Permission_Check]
                 .stream().map(BaseModel::getId).collect(Collectors.toList());
+        // &begin[User_Management]
         var groupIds = storage.getObjects(Group.class, new Request(
-                new Columns.Include("id"),
-                new Condition.Permission(Group.class, Report.class, report.getId()))) // &line[Permission_Check]
+                        new Columns.Include("id"),
+                        new Condition.Permission(Group.class, Report.class, report.getId()))) // &line[Permission_Check]
                 .stream().map(BaseModel::getId).collect(Collectors.toList());
         var users = storage.getObjects(User.class, new Request(
                 new Columns.Include("id"),
@@ -143,9 +144,10 @@ public class TaskReports extends SingleScheduleTask {
                     reportMailer.sendAsync(user.getId(), stream -> stopsReportProvider.getExcel(
                             stream, user.getId(), deviceIds, groupIds, from, to));
                 }
-                default -> LOGGER.warn("Unsupported report type {}", report.getType());
+                default -> LOGGER.warn("Unsupported report type {}", report.getType()); // &line[Authentication_Logging]
             }
         }
+        // &end[User_Management]
     }
 
 }

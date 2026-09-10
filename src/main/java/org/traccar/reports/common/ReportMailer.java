@@ -34,12 +34,12 @@ public class ReportMailer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportMailer.class);
 
-    private final PermissionsService permissionsService;
+    private final PermissionsService permissionsService; // &line[Permission]
     private final MailManager mailManager;
 
     @Inject
-    public ReportMailer(PermissionsService permissionsService, MailManager mailManager) {
-        this.permissionsService = permissionsService;
+    public ReportMailer(PermissionsService permissionsService, MailManager mailManager) { // &line[Permission] 
+        this.permissionsService = permissionsService; // &line[Permission] 
         this.mailManager = mailManager;
     }
 
@@ -54,8 +54,8 @@ public class ReportMailer {
                 attachment.setDataHandler(new DataHandler(new ByteArrayDataSource(
                         stream.toByteArray(), "application/octet-stream")));
 
-                User user = permissionsService.getUser(userId);
-                mailManager.sendMessage(user, false, "Report", "The report is in the attachment.", attachment);
+                User user = permissionsService.getUser(userId); // &line[User_Management, Permission]
+                mailManager.sendMessage(user, false, "Report", "The report is in the attachment.", attachment); // &line[User_Management]
             } catch (StorageException | IOException | MessagingException e) {
                 LOGGER.warn("Email report failed", e);
             }

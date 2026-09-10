@@ -157,7 +157,7 @@ public class StatisticsManager {
     public synchronized void registerRequest(long userId) {
         checkSplit();
         requests += 1;
-        if (userId != 0 && userId != ServiceAccountUser.ID) {
+        if (userId != 0 && userId != ServiceAccountUser.ID) { // &line[User_Management]
             users.add(userId);
         }
     }

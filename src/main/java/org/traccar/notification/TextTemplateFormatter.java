@@ -51,13 +51,13 @@ public class TextTemplateFormatter {
         this.tokenManager = tokenManager; // &line[Token_Management]
     }
 
-    public VelocityContext prepareContext(Server server, User user) {
+    public VelocityContext prepareContext(Server server, User user) { // &line[User_Management]
 
         VelocityContext velocityContext = new VelocityContext();
 
         if (user != null) {
-            velocityContext.put("user", user);
-            velocityContext.put("timezone", UserUtil.getTimezone(server, user));
+            velocityContext.put("user", user); // &line[User_Management]
+            velocityContext.put("timezone", UserUtil.getTimezone(server, user)); // &line[User_Management]
             try {
                 velocityContext.put("token", tokenManager.generateToken(user.getId())); // &line[Token_Generation]
             } catch (IOException | GeneralSecurityException | StorageException e) { // &line[SecurityException]
