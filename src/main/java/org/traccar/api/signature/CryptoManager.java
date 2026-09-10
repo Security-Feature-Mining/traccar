@@ -50,7 +50,7 @@ public class CryptoManager {
     }
     // &end[Key_Storage]
     // &begin[ECDSA_Signature_Signing]
-    public byte[] sign(byte[] data) throws GeneralSecurityException, StorageException {
+    public byte[] sign(byte[] data) throws GeneralSecurityException, StorageException { // &line[SecurityException]
         if (privateKey == null) {
             initializeKeys();
         }
@@ -66,7 +66,7 @@ public class CryptoManager {
     }
     // &end[ECDSA_Signature_Signing]
     // &begin[ECDSA_Signature_Verification]
-    public byte[] verify(byte[] data) throws GeneralSecurityException, StorageException {
+    public byte[] verify(byte[] data) throws GeneralSecurityException, StorageException { // &line[SecurityException]
         if (publicKey == null) {
             initializeKeys();
         }
@@ -84,7 +84,7 @@ public class CryptoManager {
     // &end[ECDSA_Signature_Verification]
 
 // &begin[Key_Generation]
-    private void initializeKeys() throws StorageException, GeneralSecurityException {
+    private void initializeKeys() throws StorageException, GeneralSecurityException { // &line[SecurityException]
         KeystoreModel model = storage.getObject(KeystoreModel.class, new Request(new Columns.All())); // &line[Key_Storage]
         if (model != null) {
             // &begin[X509_Key_Generation]

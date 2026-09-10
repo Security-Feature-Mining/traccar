@@ -59,12 +59,12 @@ public class TokenManager {
         this.cryptoManager = cryptoManager;
     }
     // &begin[Token_Generation]
-    public String generateToken(long userId) throws IOException, GeneralSecurityException, StorageException {
+    public String generateToken(long userId) throws IOException, GeneralSecurityException, StorageException { // &line[SecurityException]
         return generateToken(userId, null);
     }
 
     public String generateToken(
-            long userId, Date expiration) throws IOException, GeneralSecurityException, StorageException {
+            long userId, Date expiration) throws IOException, GeneralSecurityException, StorageException { // &line[SecurityException]
         TokenData data = new TokenData();
         data.userId = userId;
         // &begin[Token_Expiration]
@@ -80,7 +80,7 @@ public class TokenManager {
     // &end[Token_Generation]
 
 // &begin[Token_Validation]
-    public TokenData verifyToken(String token) throws IOException, GeneralSecurityException, StorageException {
+    public TokenData verifyToken(String token) throws IOException, GeneralSecurityException, StorageException { // &line[SecurityException]
         byte[] encoded = cryptoManager.verify(Base64.decodeBase64(token));
         TokenData data = objectMapper.readValue(encoded, TokenData.class);
         // &begin[Token_Expiration]

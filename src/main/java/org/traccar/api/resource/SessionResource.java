@@ -156,7 +156,7 @@ public class SessionResource extends BaseResource {
     @Path("token")
     @POST
     public String requestToken(
-            @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException {
+            @FormParam("expiration") Date expiration) throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException]
         Date currentExpiration = (Date) request.getSession().getAttribute(SessionHelper.EXPIRATION_KEY);
         if (currentExpiration != null && currentExpiration.before(expiration)) {
             expiration = currentExpiration;
@@ -176,7 +176,7 @@ public class SessionResource extends BaseResource {
     @PermitAll // &line[Permission]
     @Path("openid/callback")
     @GET
-    public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException {
+    public Response requestToken() throws IOException, StorageException, ParseException, GeneralSecurityException { // &line[SecurityException]
         StringBuilder requestUrl = new StringBuilder(request.getRequestURL().toString());
         String queryString = request.getQueryString();
         String requestUri = requestUrl.append('?').append(queryString).toString();

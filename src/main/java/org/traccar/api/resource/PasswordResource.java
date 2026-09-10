@@ -58,7 +58,7 @@ public class PasswordResource extends BaseResource {
     @PermitAll // &line[Permission]
     @POST
     public Response reset(@FormParam("email") String email)
-            throws StorageException, MessagingException, GeneralSecurityException, IOException {
+            throws StorageException, MessagingException, GeneralSecurityException, IOException { // &line[SecurityException]
 
         // &begin[Secure_Storage]
         User user = storage.getObject(User.class, new Request(
@@ -79,7 +79,7 @@ public class PasswordResource extends BaseResource {
     @POST
     public Response update(
             @FormParam("token") String token, @FormParam("password") String password)
-            throws StorageException, GeneralSecurityException, IOException {
+            throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException]
 
         long userId = tokenManager.verifyToken(token).getUserId(); // &line[Token_Validation]
         // &begin[Secure_Storage]

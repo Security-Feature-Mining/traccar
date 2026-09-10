@@ -136,20 +136,20 @@ public class OpenIdProvider {
     }
 
     private OIDCTokenResponse getToken(AuthorizationCode code)
-            throws IOException, ParseException, GeneralSecurityException {
+            throws IOException, ParseException, GeneralSecurityException { // &line[SecurityException]
         AuthorizationGrant codeGrant = new AuthorizationCodeGrant(code, callbackUrl);
         TokenRequest tokenRequest = new TokenRequest(tokenUrl, clientAuth, codeGrant);
 
         HTTPResponse tokenResponse = tokenRequest.toHTTPRequest().send();
         TokenResponse token = OIDCTokenResponseParser.parse(tokenResponse);
         if (!token.indicatesSuccess()) {
-            throw new GeneralSecurityException("Unable to authenticate with the OpenID Connect provider.");
+            throw new GeneralSecurityException("Unable to authenticate with the OpenID Connect provider."); // &line[SecurityException]
         }
 
         return (OIDCTokenResponse) token.toSuccessResponse();
     }
 
-    private UserInfo getUserInfo(BearerAccessToken token) throws IOException, ParseException, GeneralSecurityException {
+    private UserInfo getUserInfo(BearerAccessToken token) throws IOException, ParseException, GeneralSecurityException { // &line[SecurityException]
         HTTPResponse httpResponse = new UserInfoRequest(userInfoUrl, token)
                 .toHTTPRequest()
                 .send();
@@ -157,7 +157,7 @@ public class OpenIdProvider {
         UserInfoResponse userInfoResponse = UserInfoResponse.parse(httpResponse);
 
         if (!userInfoResponse.indicatesSuccess()) {
-            throw new GeneralSecurityException(
+            throw new GeneralSecurityException( // &line[SecurityException]
                     "Failed to access OpenID Connect user info endpoint. Please contact your administrator.");
         }
 
@@ -165,18 +165,18 @@ public class OpenIdProvider {
     }
 
     public URI handleCallback(URI requestUri, HttpServletRequest request)
-            throws StorageException, ParseException, IOException, GeneralSecurityException {
+            throws StorageException, ParseException, IOException, GeneralSecurityException { // &line[SecurityException]
 
         AuthorizationResponse response = AuthorizationResponse.parse(requestUri);
 
         if (!response.indicatesSuccess()) {
-            throw new GeneralSecurityException(response.toErrorResponse().getErrorObject().getDescription());
+            throw new GeneralSecurityException(response.toErrorResponse().getErrorObject().getDescription()); // &line[SecurityException]
         }
 
         AuthorizationCode authCode = response.toSuccessResponse().getAuthorizationCode();
 
         if (authCode == null) {
-            throw new GeneralSecurityException("Malformed OpenID callback.");
+            throw new GeneralSecurityException("Malformed OpenID callback."); // &line[SecurityException]
         }
 
         OIDCTokenResponse tokens = getToken(authCode);
@@ -189,7 +189,7 @@ public class OpenIdProvider {
         boolean administrator = adminGroup != null && userGroups.contains(adminGroup);
 
         if (!(administrator || allowGroup == null || userGroups.contains(allowGroup))) { // &line[Role_Check]
-            throw new GeneralSecurityException("Your OpenID Groups do not permit access to Traccar.");
+            throw new GeneralSecurityException("Your OpenID Groups do not permit access to Traccar."); // &line[SecurityException]
         }
 
         // &begin[User_Login]

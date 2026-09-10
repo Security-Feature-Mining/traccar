@@ -66,7 +66,7 @@ public class AsyncSocketServlet extends JettyWebSocketServlet {
                 String token = tokens.iterator().next();
                 try {
                     userId = loginService.login(token).getUser().getId(); // &line[User_Login] 
-                } catch (StorageException | GeneralSecurityException | IOException e) {
+                } catch (StorageException | GeneralSecurityException | IOException e) { // &line[SecurityException]
                     throw new RuntimeException(e);
                 }
                 // &end[Token_Management]

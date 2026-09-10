@@ -83,7 +83,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
                                 new UserPrincipal(user.getId(), loginResult.getExpiration())); // &line[Token_Expiration]
                         // &end[User_Management]
                     }
-                } catch (StorageException | GeneralSecurityException | IOException e) {
+                } catch (StorageException | GeneralSecurityException | IOException e) { // &line[SecurityException]
                     throw new WebApplicationException(e);
                 }
 

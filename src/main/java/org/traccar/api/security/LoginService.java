@@ -62,7 +62,7 @@ public class LoginService {
     }
 
     public LoginResult login(
-            String scheme, String credentials) throws StorageException, GeneralSecurityException, IOException {
+            String scheme, String credentials) throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException]
         switch (scheme.toLowerCase()) {
             // &begin[Bearer_Authentication]
             case "bearer":
@@ -80,7 +80,7 @@ public class LoginService {
     }
 
     // &begin[Token_Authentication]
-    public LoginResult login(String token) throws StorageException, GeneralSecurityException, IOException {
+    public LoginResult login(String token) throws StorageException, GeneralSecurityException, IOException { // &line[SecurityException]
         if (serviceAccountToken != null && serviceAccountToken.equals(token)) {
             return new LoginResult(new ServiceAccountUser());
         }
