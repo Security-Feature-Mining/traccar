@@ -71,7 +71,6 @@ public class PasswordResource extends BaseResource {
         }
         return Response.ok().build();
     }
-    // &end[Password_Reset]
 
     // &begin[Password_Update]
     @Path("update")
@@ -98,6 +97,7 @@ public class PasswordResource extends BaseResource {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
     // &end[Password_Update]
+    // &end[Password_Reset]
 
 }
 // &end[Password_Definition]

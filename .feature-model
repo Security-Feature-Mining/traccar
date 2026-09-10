@@ -27,7 +27,6 @@ Security_Features
                     Password_Validation
                     Password_Definition
                     Password_Update
-                    Password_Reset
                 User_Authentication_Token
                     Authentication_Token
                         Authentication_Token_Validation
@@ -36,6 +35,7 @@ Security_Features
                     API_Token
                         Token_Management
             One_Time_Password
+                Password_Reset
             Certificate_Authentication
             Multifactor_Authentication
                 TOTP_Authentication
@@ -101,8 +101,8 @@ Security_Features
             Certification
             Message_Authentication
                 ECDSA_Signature_Verification
+            Message_Signing
                 ECDSA_Signature_Signing
-                Message_Signing
             Digital_Watermarking
         Steganography
     Security_Monitoring
