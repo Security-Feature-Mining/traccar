@@ -102,7 +102,7 @@ public class CacheManager implements BroadcastInterface {
     public <T extends BaseModel> Set<T> getDeviceObjects(long deviceId, Class<T> clazz) {
         try {
             lock.readLock().lock();
-            return graph.getObjects(Device.class, deviceId, clazz, Set.of(Group.class), true)
+            return graph.getObjects(Device.class, deviceId, clazz, Set.of(Group.class), true) // &line[User_Management]
                     .collect(Collectors.toUnmodifiableSet());
         } finally {
             lock.readLock().unlock();
@@ -143,13 +143,8 @@ public class CacheManager implements BroadcastInterface {
 
     public Set<Notification> getDeviceNotifications(long deviceId) {
         try {
-<<<<<<< Updated upstream
             lock.readLock().lock();
-            var direct = graph.getObjects(Device.class, deviceId, Notification.class, Set.of(Group.class), true)
-=======
-            lock.readLock().lock(); // &line[Read_Write_Lock]
-            var direct = graph.getObjects(Device.class, deviceId, Notification.class, Set.of(Group.class), true) // &line[User_Management] 
->>>>>>> Stashed changes
+            var direct = graph.getObjects(Device.class, deviceId, Notification.class, Set.of(Group.class), true) // &line[User_Management]
                     .map(BaseModel::getId)
                     .collect(Collectors.toUnmodifiableSet());
             return graph.getObjects(Device.class, deviceId, Notification.class, Set.of(Group.class, User.class), true) // &line[User_Management] 
